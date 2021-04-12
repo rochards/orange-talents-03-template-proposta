@@ -1,5 +1,6 @@
 package br.com.zupacademy.desafioproposta.proposta;
 
+import br.com.zupacademy.desafioproposta.compartilhado.handlers.APIErrorHandler;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,7 +30,7 @@ public class NovaPropostaController {
                                   UriComponentsBuilder uriBuilder) {
 
         if (result.hasErrors()) {
-            return ResponseEntity.badRequest().body(result.getFieldError());
+            return ResponseEntity.badRequest().body(new APIErrorHandler(result.getFieldErrors()));
         }
 
         var proposta = propostaRequest.toModel();
