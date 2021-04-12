@@ -1,6 +1,7 @@
 package br.com.zupacademy.desafioproposta.proposta;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,7 +25,12 @@ public class NovaPropostaController {
 
     @PostMapping
     @Transactional
-    public ResponseEntity<?> cria(@RequestBody NovaPropostaRequest propostaRequest, UriComponentsBuilder uriBuilder) {
+    public ResponseEntity<?> cria(@RequestBody @Valid NovaPropostaRequest propostaRequest, BindingResult result,
+                                  UriComponentsBuilder uriBuilder) {
+
+        if (result.hasErrors()) {
+            return ResponseEntity.badRequest().body(result.getFieldError());
+        }
 
         var proposta = propostaRequest.toModel();
         em.persist(proposta);
