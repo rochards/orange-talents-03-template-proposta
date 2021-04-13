@@ -1,27 +1,31 @@
 package br.com.zupacademy.desafioproposta.proposta;
 
 import br.com.zupacademy.desafioproposta.compartilhado.handlers.APIErrorHandler;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.List;
+
+import static org.springframework.http.HttpStatus.*;
 
 @RestController
 @RequestMapping("/propostas")
 public class NovaPropostaController {
 
-    private final EntityManager em;
+    private final PropostaRepository propostaRepository;
 
-    public NovaPropostaController(EntityManager em) {
-        this.em = em;
+    public NovaPropostaController(PropostaRepository propostaRepository) {
+        this.propostaRepository = propostaRepository;
     }
 
     @PostMapping
@@ -32,9 +36,14 @@ public class NovaPropostaController {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(new APIErrorHandler(result.getFieldErrors()));
         }
+        if (propostaRepository.existsByDocumento(propostaRequest.getDocumento())) {
+            var errors = new APIErrorHandler(List.of(new FieldError("Proposta", "documento",
+                    "já existe uma proposta cadastrada para esse documento")), UNPROCESSABLE_ENTITY);
+            return ResponseEntity.status(UNPROCESSABLE_ENTITY).body(errors);
+        }
 
         var proposta = propostaRequest.toModel();
-        em.persist(proposta);
+        propostaRepository.save(proposta);
 
         URI location = uriBuilder.path("/propostas/{id}").build(proposta.getId());
         return ResponseEntity.created(location).build();
