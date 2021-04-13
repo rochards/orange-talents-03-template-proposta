@@ -37,8 +37,6 @@ public class NovaPropostaController {
         em.persist(proposta);
 
         URI location = uriBuilder.path("/propostas/{id}").build(proposta.getId());
-        var propostaResponse = new NovaPropostaResponse(proposta);
-
-        return ResponseEntity.created(location).body(propostaResponse);
+        return ResponseEntity.created(location).build();
     }
 }
