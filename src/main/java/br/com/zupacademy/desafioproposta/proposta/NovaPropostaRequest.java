@@ -2,15 +2,13 @@ package br.com.zupacademy.desafioproposta.proposta;
 
 import br.com.zupacademy.desafioproposta.compartilhado.validators.CpfOrCnpj;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
+import javax.validation.constraints.*;
 import java.math.BigDecimal;
 
 public class NovaPropostaRequest {
 
-    @NotBlank @CpfOrCnpj
+    @NotBlank @Pattern(regexp = "([0-9]{11})|([0-9]{14})", message = "CPF/CNPJ não deve conter pontuação")
+    @CpfOrCnpj
     private String documento;
 
     @NotBlank @Email
