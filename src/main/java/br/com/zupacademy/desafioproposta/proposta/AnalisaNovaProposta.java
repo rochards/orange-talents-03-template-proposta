@@ -1,15 +1,15 @@
 package br.com.zupacademy.desafioproposta.proposta;
 
-import br.com.zupacademy.desafioproposta.proposta.financeiro.ConsultaFinanceiro;
-import br.com.zupacademy.desafioproposta.proposta.financeiro.SolicitacaoRequest;
-import br.com.zupacademy.desafioproposta.proposta.financeiro.SolicitacaoResponse;
+import br.com.zupacademy.desafioproposta.financeiro.ConsultaFinanceiro;
+import br.com.zupacademy.desafioproposta.financeiro.SolicitacaoRequest;
+import br.com.zupacademy.desafioproposta.financeiro.SolicitacaoResponse;
 import feign.FeignException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import static br.com.zupacademy.desafioproposta.proposta.financeiro.StatusSolicitacao.COM_RESTRICAO;
-import static br.com.zupacademy.desafioproposta.proposta.financeiro.StatusSolicitacao.SEM_RESTRICAO;
+import static br.com.zupacademy.desafioproposta.financeiro.StatusSolicitacao.COM_RESTRICAO;
+import static br.com.zupacademy.desafioproposta.financeiro.StatusSolicitacao.SEM_RESTRICAO;
 
 @Component
 public class AnalisaNovaProposta {

@@ -1,4 +1,4 @@
-package br.com.zupacademy.desafioproposta.proposta.financeiro;
+package br.com.zupacademy.desafioproposta.financeiro;
 
 public class SolicitacaoResponse {
 

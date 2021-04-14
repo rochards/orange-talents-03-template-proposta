@@ -1,4 +1,4 @@
-package br.com.zupacademy.desafioproposta.proposta.financeiro;
+package br.com.zupacademy.desafioproposta.financeiro;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
