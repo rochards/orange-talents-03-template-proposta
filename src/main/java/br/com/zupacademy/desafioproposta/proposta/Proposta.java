@@ -36,12 +36,21 @@ public class Proposta {
     public Proposta() {
     }
 
+    /**
+     * Cria um nova Proposta. Uma nova Proposta é criada por default com status NAO_ELEGIVE
+     * @param documento documento do solicitante
+     * @param email email do solicitante
+     * @param nome nome do solicitante
+     * @param endereco do solicitante
+     * @param salario salário do solicitante
+     * */
     public Proposta(String documento, String email, String nome, String endereco, BigDecimal salario) {
         this.documento = documento;
         this.email = email;
         this.nome = nome;
         this.endereco = endereco;
         this.salario = salario;
+        this.status = NAO_ELEGIVEL;
     }
 
     public void atualizaStatus(boolean elegivel) {
