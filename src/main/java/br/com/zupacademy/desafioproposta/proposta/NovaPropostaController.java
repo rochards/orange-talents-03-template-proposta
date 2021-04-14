@@ -1,7 +1,6 @@
 package br.com.zupacademy.desafioproposta.proposta;
 
 import br.com.zupacademy.desafioproposta.compartilhado.handlers.APIErrorHandler;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -23,9 +22,11 @@ import static org.springframework.http.HttpStatus.*;
 public class NovaPropostaController {
 
     private final PropostaRepository propostaRepository;
+    private final AnalisaNovaProposta analisaNovaProposta;
 
-    public NovaPropostaController(PropostaRepository propostaRepository) {
+    public NovaPropostaController(PropostaRepository propostaRepository, AnalisaNovaProposta analisaNovaProposta) {
         this.propostaRepository = propostaRepository;
+        this.analisaNovaProposta = analisaNovaProposta;
     }
 
     @PostMapping
@@ -43,6 +44,11 @@ public class NovaPropostaController {
         }
 
         var proposta = propostaRequest.toModel();
+        propostaRepository.save(proposta);
+
+        boolean elegivel = analisaNovaProposta.semRestricao(proposta.getDocumento(), proposta.getNome(),
+                proposta.getId().toString());
+        proposta.atualizaStatus(elegivel);
         propostaRepository.save(proposta);
 
         URI location = uriBuilder.path("/propostas/{id}").build(proposta.getId());

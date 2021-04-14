@@ -3,6 +3,8 @@ package br.com.zupacademy.desafioproposta.proposta;
 import javax.persistence.*;
 import java.math.BigDecimal;
 
+import static br.com.zupacademy.desafioproposta.proposta.StatusProposta.*;
+
 @Entity
 public class Proposta {
 
@@ -24,6 +26,9 @@ public class Proposta {
     @Column(nullable = false, columnDefinition = "DECIMAL(10,2) UNSIGNED")
     private BigDecimal salario;
 
+    @Enumerated(EnumType.STRING)
+    private StatusProposta status;
+
     /**
      * @Deprecated hibernate only
      * */
@@ -37,6 +42,10 @@ public class Proposta {
         this.nome = nome;
         this.endereco = endereco;
         this.salario = salario;
+    }
+
+    public void atualizaStatus(boolean elegivel) {
+        this.status = elegivel ? ELEGIVEL : NAO_ELEGIVEL;
     }
 
     public Integer getId() {
