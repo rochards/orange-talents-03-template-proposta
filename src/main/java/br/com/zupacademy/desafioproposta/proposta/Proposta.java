@@ -80,4 +80,8 @@ public class Proposta {
     public BigDecimal getSalario() {
         return salario;
     }
+
+    public StatusProposta getStatus() {
+        return status;
+    }
 }
