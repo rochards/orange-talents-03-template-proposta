@@ -1,5 +1,7 @@
 package br.com.zupacademy.desafioproposta.proposta;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -9,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -24,6 +27,8 @@ class NovaPropostaControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+    @Autowired
+    private ObjectMapper mapper;
 
     private URI endpoint;
 
@@ -36,8 +41,9 @@ class NovaPropostaControllerTest {
     @Test
     @DisplayName("deveria criar uma nova proposta com sucesso")
     void teste01() throws Exception {
-        String jsonRequest = "{\"documento\":\"93577269006\", \"email\":\"teste@email.com.br\", " +
-                "\"nome\":\"Nome de teste\", \"endereco\":\"Endereco de teste\", \"salario\":\"1950.00\"}";
+        var propostaRequest = new NovaPropostaRequest("93577269006", "teste@email.com.br", "Nome de teste", "Endereco " +
+                "de teste", BigDecimal.valueOf(1950));
+        String jsonRequest = toJson(propostaRequest);
 
         mockMvc.perform(post(endpoint).content(jsonRequest).contentType(APPLICATION_JSON))
                 .andExpect(status().isCreated())
@@ -47,8 +53,9 @@ class NovaPropostaControllerTest {
     @Test
     @DisplayName("não deveria criar uma nova proposta se o documento estiver com formato inválido")
     void teste02() throws Exception {
-        String jsonRequest = "{\"documento\":\"00000000000\", \"email\":\"teste@email.com.br\", " +
-                "\"nome\":\"Nome de teste\", \"endereco\":\"Endereco de teste\", \"salario\":\"1950.00\"}";
+        var propostaRequest = new NovaPropostaRequest("00000000000", "teste@email.com.br", "Nome de teste", "Endereco " +
+                "de teste", BigDecimal.valueOf(1950));
+        String jsonRequest = toJson(propostaRequest);
 
         mockMvc.perform(post(endpoint).content(jsonRequest).contentType(APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
@@ -58,8 +65,9 @@ class NovaPropostaControllerTest {
     @Test
     @DisplayName("não deveria criar uma nova proposta se o e-mail estiver com formato inválido")
     void teste03() throws Exception {
-        String jsonRequest = "{\"documento\":\"93577269006\", \"email\":\"invalido.com.br\", " +
-                "\"nome\":\"Nome de teste\", \"endereco\":\"Endereco de teste\", \"salario\":\"1950.00\"}";
+        var propostaRequest = new NovaPropostaRequest("93577269006", "invalido.com.br", "Nome de teste", "Endereco " +
+                "de teste", BigDecimal.valueOf(1950));
+        String jsonRequest = toJson(propostaRequest);
 
         mockMvc.perform(post(endpoint).content(jsonRequest).contentType(APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
@@ -69,8 +77,9 @@ class NovaPropostaControllerTest {
     @Test
     @DisplayName("não deveria criar uma nova proposta se o nome estiver em branco")
     void teste04() throws Exception {
-        String jsonRequest = "{\"documento\":\"93577269006\", \"email\":\"teste@email.com.br\", " +
-                "\"nome\":\"  \", \"endereco\":\"Endereco de teste\", \"salario\":\"1950.00\"}";
+        var propostaRequest = new NovaPropostaRequest("93577269006", "teste@email.com.br", "   ", "Endereco " +
+                "de teste", BigDecimal.valueOf(1950));
+        String jsonRequest = toJson(propostaRequest);
 
         mockMvc.perform(post(endpoint).content(jsonRequest).contentType(APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
@@ -80,8 +89,9 @@ class NovaPropostaControllerTest {
     @Test
     @DisplayName("não deveria criar uma nova proposta se o endereço estiver em branco")
     void teste05() throws Exception {
-        String jsonRequest = "{\"documento\":\"93577269006\", \"email\":\"teste@email.com.br\", " +
-                "\"nome\":\"Nome de teste\", \"endereco\":\"  \", \"salario\":\"1950.00\"}";
+        var propostaRequest = new NovaPropostaRequest("93577269006", "teste@email.com.br", "Nome de teste", " ",
+                BigDecimal.valueOf(1950));
+        String jsonRequest = toJson(propostaRequest);
 
         mockMvc.perform(post(endpoint).content(jsonRequest).contentType(APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
@@ -91,8 +101,9 @@ class NovaPropostaControllerTest {
     @Test
     @DisplayName("não deveria criar uma nova proposta se o salário for menor ou igual a zero")
     void teste06() throws Exception {
-        String jsonRequest = "{\"documento\":\"93577269006\", \"email\":\"teste@email.com.br\", " +
-                "\"nome\":\"Nome de teste\", \"endereco\":\"Endereco de teste\", \"salario\":\"0.00\"}";
+        var propostaRequest = new NovaPropostaRequest("93577269006", "teste@email.com.br", "Nome de teste", "Endereco " +
+                "de teste", BigDecimal.ZERO);
+        String jsonRequest = toJson(propostaRequest);
 
         mockMvc.perform(post(endpoint).content(jsonRequest).contentType(APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
@@ -102,8 +113,9 @@ class NovaPropostaControllerTest {
     @Test
     @DisplayName("não deveria criar uma nova proposta se o documento estiver com pontuação")
     void teste07() throws Exception {
-        String jsonRequest = "{\"documento\":\"935.772.690-06\", \"email\":\"teste@email.com.br\", " +
-                "\"nome\":\"Nome de teste\", \"endereco\":\"Endereco de teste\", \"salario\":\"1950.00\"}";
+        var propostaRequest = new NovaPropostaRequest("935.772.690-06", "teste@email.com.br", "Nome de teste",
+                "Endereco de teste", BigDecimal.valueOf(1950));
+        String jsonRequest = toJson(propostaRequest);
 
         mockMvc.perform(post(endpoint).content(jsonRequest).contentType(APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
@@ -113,10 +125,10 @@ class NovaPropostaControllerTest {
     @Test
     @DisplayName("não deveria criar uma nova proposta com documento já existente no sistema")
     void teste08() throws Exception {
-        String jsonRequest1 = "{\"documento\":\"93293100000134\", \"email\":\"teste1@email.com.br\", " +
-                "\"nome\":\"Nome de teste\", \"endereco\":\"Endereco de teste\", \"salario\":\"1950.00\"}";
-        String jsonRequest2 = "{\"documento\":\"93293100000134\", \"email\":\"teste2@email.com.br\", " +
-                "\"nome\":\"Nome de teste\", \"endereco\":\"Endereco de teste\", \"salario\":\"1950.00\"}";
+        var propostaRequest = new NovaPropostaRequest("93293100000134", "teste@email.com.br", "Nome de teste",
+                "Endereco de teste", BigDecimal.valueOf(1950));
+        String jsonRequest1 = toJson(propostaRequest);
+        String jsonRequest2 = toJson(propostaRequest);
 
         mockMvc.perform(post(endpoint).content(jsonRequest1).contentType(APPLICATION_JSON))
                 .andExpect(status().isCreated())
@@ -125,5 +137,9 @@ class NovaPropostaControllerTest {
         mockMvc.perform(post(endpoint).content(jsonRequest2).contentType(APPLICATION_JSON))
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(jsonPath("$.errors[0].field", is("documento")));
+    }
+
+    private String toJson(NovaPropostaRequest propostaRequest) throws JsonProcessingException {
+        return mapper.writeValueAsString(propostaRequest);
     }
 }

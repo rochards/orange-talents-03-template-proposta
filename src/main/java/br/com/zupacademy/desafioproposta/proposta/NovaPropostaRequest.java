@@ -38,4 +38,20 @@ public class NovaPropostaRequest {
     public String getDocumento() {
         return documento;
     }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public String getEndereco() {
+        return endereco;
+    }
+
+    public BigDecimal getSalario() {
+        return salario;
+    }
 }
