@@ -3,7 +3,8 @@ package br.com.zupacademy.desafioproposta.proposta;
 import javax.persistence.*;
 import java.math.BigDecimal;
 
-import static br.com.zupacademy.desafioproposta.proposta.StatusProposta.*;
+import static br.com.zupacademy.desafioproposta.proposta.StatusProposta.ELEGIVEL;
+import static br.com.zupacademy.desafioproposta.proposta.StatusProposta.NAO_ELEGIVEL;
 
 @Entity
 public class Proposta {
@@ -28,6 +29,8 @@ public class Proposta {
 
     @Enumerated(EnumType.STRING)
     private StatusProposta status;
+
+    private String idCartao;
 
     /**
      * @Deprecated hibernate only
@@ -55,6 +58,10 @@ public class Proposta {
 
     public void atualizaStatus(boolean elegivel) {
         this.status = elegivel ? ELEGIVEL : NAO_ELEGIVEL;
+    }
+
+    public void setIdCartao(String idCartao) {
+        this.idCartao = idCartao;
     }
 
     public Integer getId() {
