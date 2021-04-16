@@ -1,5 +1,6 @@
 package br.com.zupacademy.desafioproposta.proposta;
 
+import br.com.zupacademy.desafioproposta.cartao.Cartao;
 import br.com.zupacademy.desafioproposta.compartilhado.handlers.APIErrorHandler;
 import br.com.zupacademy.desafioproposta.compartilhado.transacao.Transacao;
 import org.springframework.http.ResponseEntity;
@@ -21,15 +22,17 @@ import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 @RequestMapping("/propostas")
 public class NovaPropostaController {
 
+    private final Cartao cartao;
+    private final Transacao transacao;
     private final PropostaRepository propostaRepository;
     private final AnalisaNovaProposta analisaNovaProposta;
-    private final Transacao transacao;
 
-    public NovaPropostaController(PropostaRepository propostaRepository, AnalisaNovaProposta analisaNovaProposta,
-                                  Transacao transacao) {
+    public NovaPropostaController(Cartao cartao, Transacao transacao, PropostaRepository propostaRepository,
+                                  AnalisaNovaProposta analisaNovaProposta) {
+        this.cartao = cartao;
+        this.transacao = transacao;
         this.propostaRepository = propostaRepository;
         this.analisaNovaProposta = analisaNovaProposta;
-        this.transacao = transacao;
     }
 
     @PostMapping
@@ -50,6 +53,10 @@ public class NovaPropostaController {
 
         boolean elegivel = analisaNovaProposta.semRestricao(proposta.getDocumento(), proposta.getNome(),
                 proposta.getId().toString());
+        if (elegivel) {
+            cartao.solicitaNovo(proposta.getDocumento(), proposta.getNome(), proposta.getId());
+        }
+
         proposta.atualizaStatus(elegivel);
         transacao.atualizaEComita(proposta);
 
