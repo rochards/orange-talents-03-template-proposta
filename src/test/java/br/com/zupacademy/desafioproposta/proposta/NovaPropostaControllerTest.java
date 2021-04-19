@@ -1,5 +1,6 @@
 package br.com.zupacademy.desafioproposta.proposta;
 
+import br.com.zupacademy.desafioproposta.cartao.Cartao;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -16,6 +18,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import static org.hamcrest.core.Is.is;
+import static org.mockito.Mockito.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -29,6 +32,10 @@ class NovaPropostaControllerTest {
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper mapper;
+    @MockBean
+    private Cartao cartao;
+    @MockBean
+    private AnalisaNovaProposta analisaNovaProposta;
 
     private URI endpoint;
 
@@ -137,6 +144,40 @@ class NovaPropostaControllerTest {
         mockMvc.perform(post(endpoint).content(jsonRequest2).contentType(APPLICATION_JSON))
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(jsonPath("$.errors[0].field", is("documento")));
+    }
+
+    @Test
+    @DisplayName("deveria enviar solicitação de novo cartão, caso a nova proposta seja elegível para tal")
+    void teste09() throws Exception {
+        var propostaRequest = new NovaPropostaRequest("79074714005", "teste@email.com.br", "Nome de teste",
+                "Endereco de teste", BigDecimal.valueOf(1950));
+        String jsonRequest = toJson(propostaRequest);
+
+        when(analisaNovaProposta.semRestricao(propostaRequest.getDocumento(), propostaRequest.getNome(), "3"))
+                .thenReturn(true);
+
+        mockMvc.perform(post(endpoint).content(jsonRequest).contentType(APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andExpect(header().exists("Location"));
+
+        verify(cartao, atLeastOnce()).solicitaNovo(propostaRequest.getDocumento(), propostaRequest.getNome(), 3);
+    }
+
+    @Test
+    @DisplayName("não deveria enviar solicitação de novo cartão, quando a nova proposta não seja elegível para tal")
+    void teste10() throws Exception {
+        var propostaRequest = new NovaPropostaRequest("91326072021", "teste@email.com.br", "Nome de teste",
+                "Endereco de teste", BigDecimal.valueOf(1950));
+        String jsonRequest = toJson(propostaRequest);
+
+        when(analisaNovaProposta.semRestricao(propostaRequest.getDocumento(), propostaRequest.getNome(), "4"))
+                .thenReturn(false);
+
+        mockMvc.perform(post(endpoint).content(jsonRequest).contentType(APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andExpect(header().exists("Location"));
+
+        verify(cartao, never()).solicitaNovo(propostaRequest.getDocumento(), propostaRequest.getNome(), 4);
     }
 
     private String toJson(NovaPropostaRequest propostaRequest) throws JsonProcessingException {
