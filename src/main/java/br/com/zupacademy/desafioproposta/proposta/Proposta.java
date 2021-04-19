@@ -2,6 +2,7 @@ package br.com.zupacademy.desafioproposta.proposta;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.Objects;
 
 import static br.com.zupacademy.desafioproposta.proposta.StatusProposta.ELEGIVEL;
 import static br.com.zupacademy.desafioproposta.proposta.StatusProposta.NAO_ELEGIVEL;
@@ -62,6 +63,10 @@ public class Proposta {
 
     public void setIdCartao(String idCartao) {
         this.idCartao = idCartao;
+    }
+
+    public String getIdCartao() {
+        return idCartao;
     }
 
     public Integer getId() {

@@ -56,7 +56,6 @@ public class Cartao {
                 }
             } catch (FeignException.InternalServerError ex) {
                 logger.warn(ex.getMessage());
-                System.out.println(ex.getMessage());
             } catch (FeignException ex) {
                 logger.error(ex.getMessage());
             }
