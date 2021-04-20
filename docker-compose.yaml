@@ -6,6 +6,8 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
       ZOOKEEPER_SYNC_LIMIT: 2
+    networks: 
+      - desafio-network
 
   kafka:
     image: "confluentinc/cp-kafka:5.2.1"
@@ -20,6 +22,8 @@ services:
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+    networks: 
+      - desafio-network
 
   postgres:
     image: 'postgres:alpine'
@@ -32,6 +36,8 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: keycloak
       POSTGRES_HOST: postgres
+    networks: 
+      - desafio-network
 
   keycloak:
     image: jboss/keycloak
@@ -60,6 +66,8 @@ services:
       KEYCLOAK_USER: admin
       KEYCLOAK_PASSWORD: Pa55w0rd
       POSTGRES_PORT_5432_TCP_ADDR: 127.0.0.1
+    networks: 
+      - desafio-network
 
   analise:
     image: 'zupacademy/analise-financeira'
@@ -70,6 +78,8 @@ services:
       LOG_LEVEL: INFO
       URL_SISTEMA_CARTAO: http://contas:8888/api/cartoes
       JAEGER_ENDPOINT: http://jaeger:14268/api/traces
+    networks: 
+      - desafio-network
 
   contas:
     image: 'zupacademy/contas'
@@ -79,6 +89,8 @@ services:
       SERVER_PORT: 8888
       LOG_LEVEL: INFO
       JAEGER_ENDPOINT: http://jaeger:14268/api/traces
+    networks: 
+      - desafio-network
 
   transacoes:
     image: 'zupacademy/transacoes'
@@ -91,6 +103,8 @@ services:
       LOG_LEVEL: INFO
       KAFKA_HOST: "kafka:29092"
       JAEGER_ENDPOINT: http://jaeger:14268/api/traces
+    networks: 
+      - desafio-network
 
   jaeger:
     image: jaegertracing/all-in-one
@@ -105,24 +119,30 @@ services:
       - 9411:9411
     environment:
       COLLECTOR_ZIPKIN_HTTP_PORT: 9411
+    networks: 
+      - desafio-network
 
   prometheus:
     image: prom/prometheus
     volumes:
      - prometheus-volume:/etc/prometheus/
-    network_mode: bridge
+    # network_mode: bridge
     ports:
       - "9090:9090"
+    networks: 
+      - desafio-network
 
   grafana:
     image: grafana/grafana
     volumes:
       - grafana-volume:/var/lib/grafana
-    network_mode: bridge
+    # network_mode: bridge
     ports:
       - "3000:3000"
     depends_on:
       - prometheus
+    networks: 
+      - desafio-network
 
   vault:
     image: vault:1.5.3
@@ -132,8 +152,47 @@ services:
       VAULT_DEV_ROOT_TOKEN_ID: ee413645-dbe8-4848-afc6-6bb2768ada75
       VAULT_TOKEN: ee413645-dbe8-4848-afc6-6bb2768ada75
       VAULT_ADDR: http://127.0.0.1:8200
+    networks: 
+      - desafio-network
+
+  proposta:
+    build:
+      dockerfile: proposta.dockerfile
+      context: ./desafio-proposta/
+    image: rochards/proposta
+    container_name: proposta
+    ports:
+      - 8090:8080
+    depends_on:
+      - mysql
+      - contas
+      - analise
+    environment:
+      PROPOSTA_DB_URL: jdbc:mysql://mysql:3306/proposta_db?createDatabaseIfNotExist=true
+      USER_NAME_DB: root
+      USER_PASSWORD_DB: root
+      FINANCEIRO_URL: http://analise:9999/api/solicitacao
+      CONTAS_URL: http://contas:8888/api/cartoes
+    networks: 
+      - desafio-network
+    
+  mysql:
+    image: mysql:latest
+    container_name: proposta_db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: proposta_db
+    volumes:
+      - mysql-volume:/var/lib/mysql
+    networks: 
+      - desafio-network
 
 volumes:
   grafana-volume:
   prometheus-volume:
   postgres-volume:
+  mysql-volume:
+
+networks:
+  desafio-network:
+    driver: bridge
