@@ -13,7 +13,7 @@ public class ConsultaPropostaResponse {
     private String endereco;
     private BigDecimal salario;
     private StatusProposta status;
-    private List<Cartao> cartao;
+    private List<Cartao> cartoes;
 
     public ConsultaPropostaResponse(Proposta proposta) {
         this.documento = proposta.getDocumento();
@@ -22,7 +22,7 @@ public class ConsultaPropostaResponse {
         this.endereco = proposta.getEndereco();
         this.salario = proposta.getSalario();
         this.status = proposta.getStatus();
-        this.cartao = proposta.getCartao();
+        this.cartoes = proposta.getCartoes();
     }
 
     public String getDocumento() {
@@ -49,7 +49,7 @@ public class ConsultaPropostaResponse {
         return status;
     }
 
-    public List<Cartao> getCartao() {
-        return cartao;
+    public List<Cartao> getCartoes() {
+        return cartoes;
     }
 }

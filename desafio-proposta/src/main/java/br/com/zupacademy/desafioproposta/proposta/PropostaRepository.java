@@ -10,5 +10,5 @@ public interface PropostaRepository extends JpaRepository<Proposta, Integer> {
 
     boolean existsByDocumento(String documento);
 
-    List<Proposta> findFirst100ByStatusAndIdCartaoNull(StatusProposta status);
+    List<Proposta> findFirst100ByStatusAndCartoesEmpty(StatusProposta status);
 }

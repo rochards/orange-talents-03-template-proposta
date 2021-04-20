@@ -40,8 +40,4 @@ public class Cartao {
     public LocalDateTime getEmitidoEm() {
         return emitidoEm;
     }
-
-    public Proposta getProposta() {
-        return proposta;
-    }
 }

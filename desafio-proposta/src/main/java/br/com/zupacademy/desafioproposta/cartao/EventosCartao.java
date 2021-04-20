@@ -12,6 +12,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 
 import static br.com.zupacademy.desafioproposta.proposta.StatusProposta.ELEGIVEL;
@@ -44,18 +45,18 @@ public class EventosCartao {
 
     @Scheduled(fixedDelayString = "${cartao.fixed-delay}")
     public void buscaGerados() {
-        var propostasSemCartao = propostaRepository.findFirst100ByStatusAndIdCartaoNull(ELEGIVEL);
-
-        for (var proposta : propostasSemCartao) {
+        var propostasSemCartao = propostaRepository.findFirst100ByStatusAndCartoesEmpty(ELEGIVEL);
+        for (var proposta: propostasSemCartao) {
             try {
                 Map<String, Object> cartaoGerado = servicoDeContas.consultaCartaoGerado(proposta.getId());
 
                 if (ehTitularDoCartao(proposta, (String) cartaoGerado.get("titular"))) {
-                    proposta.setIdCartao((String) cartaoGerado.get("id"));
-                    transacao.atualizaEComita(proposta);
+                    var novoCartao = new Cartao((String) cartaoGerado.get("id"), LocalDateTime.parse((String) cartaoGerado.get("emitidoEm")),
+                            proposta);
+                    transacao.salvaEComita(novoCartao);
                 }
             } catch (FeignException.InternalServerError ex) {
-                logger.warn(ex.getMessage());
+                logger.warn(ex.getLocalizedMessage() + " ainda não foi encontrado cartão para essa proposta");
             } catch (FeignException ex) {
                 logger.error(ex.getMessage());
             }
@@ -68,7 +69,7 @@ public class EventosCartao {
         if (proposta.getNome().equals(titular)) {
             ehTitular = true;
         } else {
-            logger.error("Sistema de cartões gerou cartão para titular errado!");
+            logger.error("sistema de cartões gerou cartão para o titular errado!");
         }
 
         return ehTitular;

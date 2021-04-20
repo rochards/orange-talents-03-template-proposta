@@ -34,7 +34,7 @@ public class Proposta {
     private StatusProposta status;
 
     @OneToMany(mappedBy = "proposta")
-    private List<Cartao> cartao;
+    private List<Cartao> cartoes;
 
     /**
      * @Deprecated hibernate only
@@ -64,10 +64,6 @@ public class Proposta {
         this.status = elegivel ? ELEGIVEL : NAO_ELEGIVEL;
     }
 
-    public List<Cartao> getCartao() {
-        return cartao;
-    }
-
     public Integer getId() {
         return id;
     }
@@ -94,5 +90,9 @@ public class Proposta {
 
     public StatusProposta getStatus() {
         return status;
+    }
+
+    public List<Cartao> getCartoes() {
+        return cartoes;
     }
 }
