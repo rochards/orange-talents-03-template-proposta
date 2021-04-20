@@ -22,10 +22,10 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class CartaoTest {
+class EventosCartaoTest {
 
     @InjectMocks
-    private Cartao cartao;
+    private EventosCartao eventosCartao;
     @Mock
     private Transacao transacao;
     @Mock
@@ -41,7 +41,7 @@ class CartaoTest {
         when(servicoDeContas.solicitaNovoCartao(novoCartaoRequest))
                 .thenReturn(""); // o teste nao funciona como anyString(). O retorno desse metodo nao me importa
 
-        cartao.solicitaNovo("22339358027", "Peter Parker", 1);
+        eventosCartao.solicitaNovo("22339358027", "Peter Parker", 1);
 
         verify(servicoDeContas, atLeastOnce()).solicitaNovoCartao(novoCartaoRequest);
     }
@@ -52,7 +52,7 @@ class CartaoTest {
         when(propostaRepository.findFirst100ByStatusAndIdCartaoNull(ELEGIVEL))
                 .thenReturn(List.of());
 
-        cartao.buscaGerados();
+        eventosCartao.buscaGerados();
 
         verify(servicoDeContas, never()).consultaCartaoGerado(anyInt());
     }
@@ -69,7 +69,7 @@ class CartaoTest {
         when(servicoDeContas.consultaCartaoGerado(1))
                 .thenReturn(Map.of("id", "1234-1568-1587", "titular", "Peter Parker"));
 
-        cartao.buscaGerados();
+        eventosCartao.buscaGerados();
 
         verify(servicoDeContas, atLeastOnce()).consultaCartaoGerado(1);
         verify(transacao, atLeastOnce()).atualizaEComita(proposta);
@@ -87,7 +87,7 @@ class CartaoTest {
         doThrow(FeignException.InternalServerError.class)
                 .when(servicoDeContas).consultaCartaoGerado(1);
 
-        cartao.buscaGerados();
+        eventosCartao.buscaGerados();
 
         verify(servicoDeContas, atLeastOnce()).consultaCartaoGerado(1);
         verify(transacao, never()).atualizaEComita(proposta);
@@ -105,7 +105,7 @@ class CartaoTest {
         doThrow(FeignException.class)
                 .when(servicoDeContas).consultaCartaoGerado(1);
 
-        cartao.buscaGerados();
+        eventosCartao.buscaGerados();
 
         verify(servicoDeContas, atLeastOnce()).consultaCartaoGerado(1);
         verify(transacao, never()).atualizaEComita(proposta);
@@ -124,7 +124,7 @@ class CartaoTest {
         when(servicoDeContas.consultaCartaoGerado(1))
                 .thenReturn(Map.of("id", "1234-1568-1587", "titular", "Homem Aranha"));
 
-        cartao.buscaGerados();
+        eventosCartao.buscaGerados();
 
         verify(servicoDeContas, atLeastOnce()).consultaCartaoGerado(1);
         verify(transacao, never()).atualizaEComita(proposta);

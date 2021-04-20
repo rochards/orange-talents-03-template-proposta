@@ -1,6 +1,6 @@
 package br.com.zupacademy.desafioproposta.proposta;
 
-import br.com.zupacademy.desafioproposta.cartao.Cartao;
+import br.com.zupacademy.desafioproposta.cartao.EventosCartao;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,7 +33,7 @@ class NovaPropostaControllerTest {
     @Autowired
     private ObjectMapper mapper;
     @MockBean
-    private Cartao cartao;
+    private EventosCartao eventosCartao;
     @MockBean
     private AnalisaNovaProposta analisaNovaProposta;
 
@@ -160,7 +160,7 @@ class NovaPropostaControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(header().exists("Location"));
 
-        verify(cartao, atLeastOnce()).solicitaNovo(propostaRequest.getDocumento(), propostaRequest.getNome(), 3);
+        verify(eventosCartao, atLeastOnce()).solicitaNovo(propostaRequest.getDocumento(), propostaRequest.getNome(), 3);
     }
 
     @Test
@@ -177,7 +177,7 @@ class NovaPropostaControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(header().exists("Location"));
 
-        verify(cartao, never()).solicitaNovo(propostaRequest.getDocumento(), propostaRequest.getNome(), 4);
+        verify(eventosCartao, never()).solicitaNovo(propostaRequest.getDocumento(), propostaRequest.getNome(), 4);
     }
 
     private String toJson(NovaPropostaRequest propostaRequest) throws JsonProcessingException {

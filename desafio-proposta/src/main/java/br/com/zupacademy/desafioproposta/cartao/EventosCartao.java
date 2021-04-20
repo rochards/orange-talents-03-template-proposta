@@ -19,14 +19,14 @@ import static br.com.zupacademy.desafioproposta.proposta.StatusProposta.ELEGIVEL
 @Component
 @EnableAsync
 @EnableScheduling
-public class Cartao {
+public class EventosCartao {
 
-    private final Logger logger = LoggerFactory.getLogger(Cartao.class);
+    private final Logger logger = LoggerFactory.getLogger(EventosCartao.class);
     private final Transacao transacao;
     private final ServicoDeContas servicoDeContas;
     private final PropostaRepository propostaRepository;
 
-    public Cartao(Transacao transacao, ServicoDeContas servicoDeContas, PropostaRepository propostaRepository) {
+    public EventosCartao(Transacao transacao, ServicoDeContas servicoDeContas, PropostaRepository propostaRepository) {
         this.transacao = transacao;
         this.servicoDeContas = servicoDeContas;
         this.propostaRepository = propostaRepository;
