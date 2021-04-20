@@ -4,6 +4,7 @@ import br.com.zupacademy.desafioproposta.cartao.Cartao;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ConsultaPropostaResponse {
 
@@ -13,7 +14,7 @@ public class ConsultaPropostaResponse {
     private String endereco;
     private BigDecimal salario;
     private StatusProposta status;
-    private List<Cartao> cartoes;
+    private List<CartaoResponse> cartoes;
 
     public ConsultaPropostaResponse(Proposta proposta) {
         this.documento = proposta.getDocumento();
@@ -22,7 +23,13 @@ public class ConsultaPropostaResponse {
         this.endereco = proposta.getEndereco();
         this.salario = proposta.getSalario();
         this.status = proposta.getStatus();
-        this.cartoes = proposta.getCartoes();
+        setCartoes(proposta.getCartoes());
+    }
+
+    private void setCartoes(List<Cartao> cartoes) {
+        this.cartoes = cartoes.stream()
+                .map(CartaoResponse::new)
+                .collect(Collectors.toList());
     }
 
     public String getDocumento() {
@@ -49,7 +56,7 @@ public class ConsultaPropostaResponse {
         return status;
     }
 
-    public List<Cartao> getCartoes() {
+    public List<CartaoResponse> getCartoes() {
         return cartoes;
     }
 }
