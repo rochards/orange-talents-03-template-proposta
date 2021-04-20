@@ -168,7 +168,7 @@ services:
       - contas
       - analise
     environment:
-      PROPOSTA_DB_URL: jdbc:mysql://mysql:3306/proposta_db?createDatabaseIfNotExist=true
+      PROPOSTA_DB_URL: jdbc:mysql://mysql:3306/proposta_db
       USER_NAME_DB: root
       USER_PASSWORD_DB: root
       FINANCEIRO_URL: http://analise:9999/api/solicitacao
@@ -177,7 +177,10 @@ services:
       - desafio-network
     
   mysql:
-    image: mysql:latest
+    build:
+      dockerfile: proposta-db.dockerfile
+      context: ./mysql/
+    image: rochards/proposta_db
     container_name: proposta_db
     environment:
       MYSQL_ROOT_PASSWORD: root
