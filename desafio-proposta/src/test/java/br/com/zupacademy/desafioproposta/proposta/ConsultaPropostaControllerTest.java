@@ -1,5 +1,6 @@
 package br.com.zupacademy.desafioproposta.proposta;
 
+import br.com.zupacademy.desafioproposta.cartao.Cartao;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -8,10 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -35,10 +39,13 @@ class ConsultaPropostaControllerTest {
     void consultaTeste01() throws Exception {
         var propostaRegistrada = new Proposta("93577269006", "parker.aranha@gmail.com", "Peter Parker", "Queens",
                 BigDecimal.TEN);
-        propostaRegistrada.setIdCartao("1234-4147-1574");
         propostaRegistrada.atualizaStatus(true);
 
+        var cartaoRegistrado = new Cartao("1234-4147-1574", LocalDateTime.now(), propostaRegistrada);
+        ReflectionTestUtils.setField(propostaRegistrada, "cartoes", List.of(cartaoRegistrado));
+
         var propostaResponseEsperada = new ConsultaPropostaResponse(propostaRegistrada);
+
 
         when(propostaRepository.findById(1))
                 .thenReturn(Optional.of(propostaRegistrada));
