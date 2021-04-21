@@ -20,4 +20,8 @@ public class NovaBiometriaRequest {
     public Biometria toModel(Cartao cartao) {
         return new Biometria(impressaoDigital, cartao);
     }
+
+    public String getImpressaoDigital() {
+        return impressaoDigital;
+    }
 }

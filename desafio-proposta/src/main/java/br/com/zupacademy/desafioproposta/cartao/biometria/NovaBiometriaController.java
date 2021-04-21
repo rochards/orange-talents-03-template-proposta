@@ -34,7 +34,7 @@ public class NovaBiometriaController {
         }
 
         var novaBiometria = biometriaRequest.toModel(cartao);
-        transacao.salvaEComita(novaBiometria);
+        novaBiometria = transacao.salvaEComita(novaBiometria);
 
         URI location = uriBuilder.path("/cartoes/{id}/biometrias/{id}").build(cartao.getContasIdCartao(), novaBiometria.getId());
         return ResponseEntity.created(location).build();
