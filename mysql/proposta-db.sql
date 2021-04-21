@@ -21,11 +21,29 @@ CREATE TABLE IF NOT EXISTS `proposta`.`proposta` (
   `nome` VARCHAR(255) NOT NULL,
   `salario` DECIMAL(10,2) UNSIGNED NOT NULL,
   `status` VARCHAR(255) NULL DEFAULT NULL,
-  `id_cartao` VARCHAR(255) NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `UK_ay0la7s80cky229aexg8pyvod` (`documento` ASC) VISIBLE)
 ENGINE = InnoDB
-AUTO_INCREMENT = 56
+AUTO_INCREMENT = 5
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `proposta`.`cartao`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `proposta`.`cartao` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `contas_id_cartao` VARCHAR(255) NOT NULL,
+  `emitido_em` DATETIME(6) NOT NULL,
+  `proposta_id` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `UK_1sscemwooe2btsu7reyg82knq` (`contas_id_cartao` ASC) VISIBLE,
+  INDEX `FKp9vgcwkig6ql7r93tbll6dvn0` (`proposta_id` ASC) VISIBLE,
+  CONSTRAINT `FKp9vgcwkig6ql7r93tbll6dvn0`
+    FOREIGN KEY (`proposta_id`)
+    REFERENCES `proposta`.`proposta` (`id`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 5
 DEFAULT CHARACTER SET = utf8;
 
 
