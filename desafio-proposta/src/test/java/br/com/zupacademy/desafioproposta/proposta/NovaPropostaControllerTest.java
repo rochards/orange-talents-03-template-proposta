@@ -13,6 +13,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -23,6 +24,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+@Transactional // garante rollback depois que toda a suite de teste terminar
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
@@ -38,7 +40,6 @@ class NovaPropostaControllerTest {
     private AnalisaNovaProposta analisaNovaProposta;
 
     private URI endpoint;
-
 
     @BeforeEach
     void setUp() throws URISyntaxException {
@@ -153,14 +154,17 @@ class NovaPropostaControllerTest {
                 "Endereco de teste", BigDecimal.valueOf(1950));
         String jsonRequest = toJson(propostaRequest);
 
-        when(analisaNovaProposta.semRestricao(propostaRequest.getDocumento(), propostaRequest.getNome(), "3"))
+        when(analisaNovaProposta.semRestricao(eq(propostaRequest.getDocumento()), eq(propostaRequest.getNome()), anyString()))
                 .thenReturn(true);
 
-        mockMvc.perform(post(endpoint).content(jsonRequest).contentType(APPLICATION_JSON))
+        var location = mockMvc.perform(post(endpoint).content(jsonRequest).contentType(APPLICATION_JSON))
                 .andExpect(status().isCreated())
-                .andExpect(header().exists("Location"));
+                .andExpect(header().exists("Location"))
+                .andReturn().getResponse().getHeader("Location");
 
-        verify(eventosCartao, atLeastOnce()).solicitaNovo(propostaRequest.getDocumento(), propostaRequest.getNome(), 3);
+        var idProposta = recuperaIdDoLocation(location);
+        verify(analisaNovaProposta).semRestricao(propostaRequest.getDocumento(), propostaRequest.getNome(), String.valueOf(idProposta));
+        verify(eventosCartao).solicitaNovo(propostaRequest.getDocumento(), propostaRequest.getNome(), idProposta);
     }
 
     @Test
@@ -170,17 +174,27 @@ class NovaPropostaControllerTest {
                 "Endereco de teste", BigDecimal.valueOf(1950));
         String jsonRequest = toJson(propostaRequest);
 
-        when(analisaNovaProposta.semRestricao(propostaRequest.getDocumento(), propostaRequest.getNome(), "4"))
+        when(analisaNovaProposta.semRestricao(eq(propostaRequest.getDocumento()), eq(propostaRequest.getNome()), anyString()))
                 .thenReturn(false);
 
-        mockMvc.perform(post(endpoint).content(jsonRequest).contentType(APPLICATION_JSON))
+        var location = mockMvc.perform(post(endpoint).content(jsonRequest).contentType(APPLICATION_JSON))
                 .andExpect(status().isCreated())
-                .andExpect(header().exists("Location"));
+                .andExpect(header().exists("Location"))
+                .andReturn().getResponse().getHeader("Location");
 
-        verify(eventosCartao, never()).solicitaNovo(propostaRequest.getDocumento(), propostaRequest.getNome(), 4);
+        var idProposta = recuperaIdDoLocation(location);
+        verify(analisaNovaProposta).semRestricao(propostaRequest.getDocumento(), propostaRequest.getNome(), String.valueOf(idProposta));
+        verify(eventosCartao, never()).solicitaNovo(propostaRequest.getDocumento(), propostaRequest.getNome(), idProposta);
     }
 
     private String toJson(NovaPropostaRequest propostaRequest) throws JsonProcessingException {
         return mapper.writeValueAsString(propostaRequest);
+    }
+
+    private int recuperaIdDoLocation(String location) {
+        var recurso = "/propostas/";
+        var begin = location.indexOf(recurso);
+
+        return Integer.parseInt(location.substring(begin + recurso.length()));
     }
 }
