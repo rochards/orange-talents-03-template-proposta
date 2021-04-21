@@ -13,12 +13,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
 import static br.com.zupacademy.desafioproposta.proposta.StatusProposta.ELEGIVEL;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -49,7 +48,7 @@ class EventosCartaoTest {
     @Test
     @DisplayName("se não há propostas elegíveis sem cartão, não deveria chamar o serviço de contas")
     void buscaGeradosTeste01() {
-        when(propostaRepository.findFirst100ByStatusAndIdCartaoNull(ELEGIVEL))
+        when(propostaRepository.findFirst100ByStatusAndCartoesEmpty(ELEGIVEL))
                 .thenReturn(List.of());
 
         eventosCartao.buscaGerados();
@@ -62,54 +61,56 @@ class EventosCartaoTest {
             " cartão à sua proposta no banco")
     void buscaGeradosTeste02() {
         var proposta = new Proposta("22339358027", "parker.aranha@gmail.com", "Peter Parker", "Queens", BigDecimal.TEN);
+        proposta.atualizaStatus(true);
         ReflectionTestUtils.setField(proposta, "id", 1); // em Proposta não tem um setId, por isso fiz por Reflection
+        var novoCartao = new Cartao("1234-1568-1587", LocalDateTime.now(), proposta);
 
-        when(propostaRepository.findFirst100ByStatusAndIdCartaoNull(ELEGIVEL))
+        when(propostaRepository.findFirst100ByStatusAndCartoesEmpty(ELEGIVEL))
                 .thenReturn(List.of(proposta));
         when(servicoDeContas.consultaCartaoGerado(1))
-                .thenReturn(Map.of("id", "1234-1568-1587", "titular", "Peter Parker"));
+                .thenReturn(Map.of("id", novoCartao.getContasIdCartao(), "titular", proposta.getNome(), "emitidoEm",
+                        novoCartao.getEmitidoEm().toString()));
 
         eventosCartao.buscaGerados();
 
-        verify(servicoDeContas, atLeastOnce()).consultaCartaoGerado(1);
-        verify(transacao, atLeastOnce()).atualizaEComita(proposta);
-        assertEquals("1234-1568-1587", proposta.getIdCartao());
+        verify(servicoDeContas, atLeastOnce()).consultaCartaoGerado(proposta.getId());
+        verify(transacao, atLeastOnce()).salvaEComita(novoCartao);
     }
 
     @Test
     @DisplayName("deveria lançar uma exceção quando o cartão ainda não estiver pronto")
     void buscaGeradosTeste03() {
         var proposta = new Proposta("22339358027", "parker.aranha@gmail.com", "Peter Parker", "Queens", BigDecimal.TEN);
+        proposta.atualizaStatus(true);
         ReflectionTestUtils.setField(proposta, "id", 1);
 
-        when(propostaRepository.findFirst100ByStatusAndIdCartaoNull(ELEGIVEL))
+        when(propostaRepository.findFirst100ByStatusAndCartoesEmpty(ELEGIVEL))
                 .thenReturn(List.of(proposta));
-        doThrow(FeignException.InternalServerError.class)
-                .when(servicoDeContas).consultaCartaoGerado(1);
+        when(servicoDeContas.consultaCartaoGerado(proposta.getId()))
+                .thenThrow(FeignException.InternalServerError.class);
 
         eventosCartao.buscaGerados();
 
-        verify(servicoDeContas, atLeastOnce()).consultaCartaoGerado(1);
-        verify(transacao, never()).atualizaEComita(proposta);
-        assertNull(proposta.getIdCartao());
+        verify(servicoDeContas, atLeastOnce()).consultaCartaoGerado(proposta.getId());
+        verify(transacao, never()).salvaEComita(any(Cartao.class));
     }
 
     @Test
     @DisplayName("deveria lançar uma exceção quando o serviço de contas estiver DOWN")
     void buscaGeradosTeste04() {
         var proposta = new Proposta("22339358027", "parker.aranha@gmail.com", "Peter Parker", "Queens", BigDecimal.TEN);
+        proposta.atualizaStatus(true);
         ReflectionTestUtils.setField(proposta, "id", 1);
 
-        when(propostaRepository.findFirst100ByStatusAndIdCartaoNull(ELEGIVEL))
+        when(propostaRepository.findFirst100ByStatusAndCartoesEmpty(ELEGIVEL))
                 .thenReturn(List.of(proposta));
         doThrow(FeignException.class)
-                .when(servicoDeContas).consultaCartaoGerado(1);
+                .when(servicoDeContas).consultaCartaoGerado(proposta.getId());
 
         eventosCartao.buscaGerados();
 
-        verify(servicoDeContas, atLeastOnce()).consultaCartaoGerado(1);
-        verify(transacao, never()).atualizaEComita(proposta);
-        assertNull(proposta.getIdCartao());
+        verify(servicoDeContas, atLeastOnce()).consultaCartaoGerado(proposta.getId());
+        verify(transacao, never()).salvaEComita(any(Cartao.class));
     }
 
     @Test
@@ -117,17 +118,19 @@ class EventosCartaoTest {
             "retornado pelo sistema de contas")
     void buscaGeradosTeste05() {
         var proposta = new Proposta("22339358027", "parker.aranha@gmail.com", "Peter Parker", "Queens", BigDecimal.TEN);
+        proposta.atualizaStatus(true);
         ReflectionTestUtils.setField(proposta, "id", 1); // em Proposta não tem um setId, por isso fiz por Reflection
+        var novoCartao = new Cartao("1234-1568-1587", LocalDateTime.now(), proposta);
 
-        when(propostaRepository.findFirst100ByStatusAndIdCartaoNull(ELEGIVEL))
+        when(propostaRepository.findFirst100ByStatusAndCartoesEmpty(ELEGIVEL))
                 .thenReturn(List.of(proposta));
-        when(servicoDeContas.consultaCartaoGerado(1))
-                .thenReturn(Map.of("id", "1234-1568-1587", "titular", "Homem Aranha"));
+        when(servicoDeContas.consultaCartaoGerado(proposta.getId()))
+                .thenReturn(Map.of("id", novoCartao.getContasIdCartao(), "titular", "Homem Aranha", "emitidoEm",
+                        novoCartao.getEmitidoEm().toString()));
 
         eventosCartao.buscaGerados();
 
-        verify(servicoDeContas, atLeastOnce()).consultaCartaoGerado(1);
-        verify(transacao, never()).atualizaEComita(proposta);
-        assertNull(proposta.getIdCartao());
+        verify(servicoDeContas, atLeastOnce()).consultaCartaoGerado(proposta.getId());
+        verify(transacao, never()).salvaEComita(any(Cartao.class));
     }
 }

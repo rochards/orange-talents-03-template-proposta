@@ -4,6 +4,7 @@ import br.com.zupacademy.desafioproposta.proposta.Proposta;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 public class Cartao {
@@ -39,5 +40,18 @@ public class Cartao {
 
     public LocalDateTime getEmitidoEm() {
         return emitidoEm;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Cartao)) return false;
+        Cartao cartao = (Cartao) o;
+        return contasIdCartao.equals(cartao.contasIdCartao);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(contasIdCartao);
     }
 }
