@@ -47,6 +47,24 @@ AUTO_INCREMENT = 5
 DEFAULT CHARACTER SET = utf8;
 
 
+-- -----------------------------------------------------
+-- Table `proposta`.`biometria`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `proposta`.`biometria` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `cadastrada_em` DATETIME(6) NOT NULL,
+  `impressao_digital` VARCHAR(255) NOT NULL,
+  `cartao_id` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `FK4ndi2a9skyak1eyjr66m911l0` (`cartao_id` ASC) VISIBLE,
+  CONSTRAINT `FK4ndi2a9skyak1eyjr66m911l0`
+    FOREIGN KEY (`cartao_id`)
+    REFERENCES `proposta`.`cartao` (`id`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 4
+DEFAULT CHARACTER SET = utf8;
+
+
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
