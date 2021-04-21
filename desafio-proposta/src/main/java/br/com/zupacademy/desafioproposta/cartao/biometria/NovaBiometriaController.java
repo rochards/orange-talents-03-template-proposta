@@ -1,11 +1,14 @@
 package br.com.zupacademy.desafioproposta.cartao.biometria;
 
 import br.com.zupacademy.desafioproposta.cartao.Cartao;
+import br.com.zupacademy.desafioproposta.compartilhado.handlers.APIErrorHandler;
 import br.com.zupacademy.desafioproposta.compartilhado.transacao.Transacao;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.validation.Valid;
 import java.net.URI;
 
 @RestController
@@ -20,7 +23,10 @@ public class NovaBiometriaController {
 
     @PostMapping("/{idCartao}")
     public ResponseEntity<?> cadastra(@PathVariable String idCartao, UriComponentsBuilder uriBuilder,
-                                      @RequestBody NovaBiometriaRequest biometriaRequest) {
+                                      @RequestBody @Valid NovaBiometriaRequest biometriaRequest, BindingResult result) {
+        if (result.hasErrors()) {
+            return ResponseEntity.badRequest().body(new APIErrorHandler(result.getFieldErrors()));
+        }
 
         var cartao = transacao.busca(Cartao.class, "contasIdCartao", idCartao);
         if (cartao == null) {
