@@ -15,7 +15,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 import static br.com.zupacademy.desafioproposta.proposta.StatusProposta.ELEGIVEL;
 import static org.mockito.Mockito.*;
@@ -36,11 +35,12 @@ class EventosCartaoTest {
     @DisplayName("deveria solicitar um novo cartão se o serviço de contas estiver UP")
     void solicitaNovoTeste01() {
         var novoCartaoRequest = new NovoCartaoRequest("22339358027", "Peter Parker", 1);
+        var cartaoGerado = new CartaoResponse("1234-1578-1547", LocalDateTime.now(), novoCartaoRequest.getNome());
 
         when(servicoDeContas.solicitaNovoCartao(novoCartaoRequest))
-                .thenReturn(""); // o teste nao funciona como anyString(). O retorno desse metodo nao me importa
+                .thenReturn(cartaoGerado); // o teste nao funciona como anyString(). O retorno desse metodo nao me importa
 
-        eventosCartao.solicitaNovo("22339358027", "Peter Parker", 1);
+        eventosCartao.solicitaNovo(novoCartaoRequest.getDocumento(), novoCartaoRequest.getNome(), 1);
 
         verify(servicoDeContas, atLeastOnce()).solicitaNovoCartao(novoCartaoRequest);
     }
@@ -67,9 +67,9 @@ class EventosCartaoTest {
 
         when(propostaRepository.findFirst100ByStatusAndCartoesEmpty(ELEGIVEL))
                 .thenReturn(List.of(proposta));
-        when(servicoDeContas.consultaCartaoGerado(1))
-                .thenReturn(Map.of("id", novoCartao.getContasIdCartao(), "titular", proposta.getNome(), "emitidoEm",
-                        novoCartao.getEmitidoEm().toString()));
+        when(servicoDeContas.consultaCartaoGerado(proposta.getId()))
+                .thenReturn(new CartaoResponse(novoCartao.getContasIdCartao(), novoCartao.getEmitidoEm(),
+                        proposta.getNome()));
 
         eventosCartao.buscaGerados();
 
@@ -125,8 +125,8 @@ class EventosCartaoTest {
         when(propostaRepository.findFirst100ByStatusAndCartoesEmpty(ELEGIVEL))
                 .thenReturn(List.of(proposta));
         when(servicoDeContas.consultaCartaoGerado(proposta.getId()))
-                .thenReturn(Map.of("id", novoCartao.getContasIdCartao(), "titular", "Homem Aranha", "emitidoEm",
-                        novoCartao.getEmitidoEm().toString()));
+                .thenReturn(new CartaoResponse(novoCartao.getContasIdCartao(), novoCartao.getEmitidoEm(), "Homem " +
+                        "Aranha"));
 
         eventosCartao.buscaGerados();
 

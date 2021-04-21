@@ -12,9 +12,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
-import java.util.Map;
-
 import static br.com.zupacademy.desafioproposta.proposta.StatusProposta.ELEGIVEL;
 
 @Component
@@ -48,11 +45,10 @@ public class EventosCartao {
         var propostasSemCartao = propostaRepository.findFirst100ByStatusAndCartoesEmpty(ELEGIVEL);
         for (var proposta: propostasSemCartao) {
             try {
-                Map<String, Object> cartaoGerado = servicoDeContas.consultaCartaoGerado(proposta.getId());
+                var cartaoGerado = servicoDeContas.consultaCartaoGerado(proposta.getId());
 
-                if (ehTitularDoCartao(proposta, (String) cartaoGerado.get("titular"))) {
-                    var novoCartao = new Cartao((String) cartaoGerado.get("id"), LocalDateTime.parse((String) cartaoGerado.get("emitidoEm")),
-                            proposta);
+                if (ehTitularDoCartao(proposta, cartaoGerado.getTitular())) {
+                    var novoCartao = new Cartao(cartaoGerado.getId(), cartaoGerado.getEmitidoEm(), proposta);
                     transacao.salvaEComita(novoCartao);
                 }
             } catch (FeignException.InternalServerError ex) {
