@@ -10,7 +10,7 @@ import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
 
 @Configuration
-@Profile("dev")
+@Profile("prod")
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override

@@ -176,6 +176,7 @@ services:
       CONTAS_URL: http://contas:8888/api/cartoes
       KEYCLOAK_ISSUER_URI: http://keycloak:8080/auth/realms/proposta
       KEYCLOAK_JWKS_URI: http://keycloak:8080/auth/realms/proposta/protocol/openid-connect/certs
+      PROFILE: prod
     networks: 
       - desafio-network
     
