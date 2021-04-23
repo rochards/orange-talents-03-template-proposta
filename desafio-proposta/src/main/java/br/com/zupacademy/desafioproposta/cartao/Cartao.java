@@ -1,5 +1,6 @@
 package br.com.zupacademy.desafioproposta.cartao;
 
+import br.com.zupacademy.desafioproposta.cartao.bloqueio.Bloqueio;
 import br.com.zupacademy.desafioproposta.proposta.Proposta;
 
 import javax.persistence.*;
@@ -21,6 +22,13 @@ public class Cartao {
     @ManyToOne(optional = false)
     private Proposta proposta;
 
+    @OneToOne(cascade = CascadeType.MERGE, mappedBy = "cartao")
+    private Bloqueio bloqueio;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Status status;
+
     /**
      * @Deprecated hibernate only
      * */
@@ -32,6 +40,15 @@ public class Cartao {
         this.contasIdCartao = contasIdCartao;
         this.emitidoEm = emitidoEm;
         this.proposta = proposta;
+        this.status = Status.ATIVO;
+    }
+
+    public void setBloqueio(Bloqueio bloqueio) {
+        this.bloqueio = bloqueio;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
     public String getContasIdCartao() {
@@ -40,6 +57,10 @@ public class Cartao {
 
     public LocalDateTime getEmitidoEm() {
         return emitidoEm;
+    }
+
+    public Status getStatus() {
+        return status;
     }
 
     @Override
