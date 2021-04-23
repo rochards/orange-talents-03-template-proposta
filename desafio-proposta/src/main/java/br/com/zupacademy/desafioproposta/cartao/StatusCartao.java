@@ -1,5 +1,5 @@
 package br.com.zupacademy.desafioproposta.cartao;
 
-public enum Status {
+public enum StatusCartao {
     ATIVO, BLOQUEADO
 }

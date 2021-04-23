@@ -1,7 +1,7 @@
 package br.com.zupacademy.desafioproposta.cartao.bloqueio;
 
 import br.com.zupacademy.desafioproposta.cartao.Cartao;
-import br.com.zupacademy.desafioproposta.cartao.Status;
+import br.com.zupacademy.desafioproposta.cartao.StatusCartao;
 import br.com.zupacademy.desafioproposta.compartilhado.handlers.APIErrorHandler;
 import br.com.zupacademy.desafioproposta.compartilhado.transacao.Transacao;
 import org.springframework.http.HttpStatus;
@@ -32,7 +32,7 @@ public class BloqueioCartaoController {
         if (cartao == null) {
             return ResponseEntity.notFound().build();
         }
-        if (cartao.getStatus() == Status.BLOQUEADO) {
+        if (cartao.getStatus() == StatusCartao.BLOQUEADO) {
             var error = new APIErrorHandler(List.of(new FieldError("Cartao", "idCartao", "cartão já bloqueado no " +
                     "sistema")), HttpStatus.UNPROCESSABLE_ENTITY);
             return ResponseEntity.unprocessableEntity().body(error);
@@ -43,7 +43,7 @@ public class BloqueioCartaoController {
             return ResponseEntity.badRequest().body(error);
         }
 
-        cartao.setStatus(Status.BLOQUEADO);
+        cartao.setStatus(StatusCartao.BLOQUEADO);
         cartao.setBloqueio(new Bloqueio(httpRequest.getRemoteAddr(), httpRequest.getHeader("User-Agent"), cartao));
 
         transacao.atualizaEComita(cartao);

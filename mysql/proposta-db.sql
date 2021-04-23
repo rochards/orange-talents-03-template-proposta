@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS `proposta`.`proposta` (
   PRIMARY KEY (`id`),
   UNIQUE INDEX `UK_ay0la7s80cky229aexg8pyvod` (`documento` ASC) VISIBLE)
 ENGINE = InnoDB
-AUTO_INCREMENT = 5
+AUTO_INCREMENT = 6
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -35,6 +35,7 @@ CREATE TABLE IF NOT EXISTS `proposta`.`cartao` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `contas_id_cartao` VARCHAR(255) NOT NULL,
   `emitido_em` DATETIME(6) NOT NULL,
+  `status` VARCHAR(255) NOT NULL,
   `proposta_id` INT NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `UK_1sscemwooe2btsu7reyg82knq` (`contas_id_cartao` ASC) VISIBLE,
@@ -43,7 +44,7 @@ CREATE TABLE IF NOT EXISTS `proposta`.`cartao` (
     FOREIGN KEY (`proposta_id`)
     REFERENCES `proposta`.`proposta` (`id`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 5
+AUTO_INCREMENT = 4
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -61,7 +62,23 @@ CREATE TABLE IF NOT EXISTS `proposta`.`biometria` (
     FOREIGN KEY (`cartao_id`)
     REFERENCES `proposta`.`cartao` (`id`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 4
+AUTO_INCREMENT = 3
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `proposta`.`bloqueio`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `proposta`.`bloqueio` (
+  `ip_cliente` VARCHAR(255) NOT NULL,
+  `user_agent_cliente` VARCHAR(255) NOT NULL,
+  `cartao_id` INT NOT NULL,
+  `bloqueado_em` DATETIME(6) NOT NULL,
+  PRIMARY KEY (`cartao_id`),
+  CONSTRAINT `FKfyikbq2kri522nirnxfokdnyu`
+    FOREIGN KEY (`cartao_id`)
+    REFERENCES `proposta`.`cartao` (`id`))
+ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
 

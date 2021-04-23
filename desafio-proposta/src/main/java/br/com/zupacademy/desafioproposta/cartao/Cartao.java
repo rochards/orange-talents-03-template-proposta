@@ -27,7 +27,7 @@ public class Cartao {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private Status status;
+    private StatusCartao status;
 
     /**
      * @Deprecated hibernate only
@@ -40,14 +40,14 @@ public class Cartao {
         this.contasIdCartao = contasIdCartao;
         this.emitidoEm = emitidoEm;
         this.proposta = proposta;
-        this.status = Status.ATIVO;
+        this.status = StatusCartao.ATIVO;
     }
 
     public void setBloqueio(Bloqueio bloqueio) {
         this.bloqueio = bloqueio;
     }
 
-    public void setStatus(Status status) {
+    public void setStatus(StatusCartao status) {
         this.status = status;
     }
 
@@ -59,7 +59,7 @@ public class Cartao {
         return emitidoEm;
     }
 
-    public Status getStatus() {
+    public StatusCartao getStatus() {
         return status;
     }
 
