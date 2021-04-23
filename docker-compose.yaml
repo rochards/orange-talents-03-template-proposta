@@ -167,12 +167,15 @@ services:
       - mysql
       - contas
       - analise
+      - keycloak
     environment:
       PROPOSTA_DB_URL: jdbc:mysql://mysql:3306/proposta_db
       USER_NAME_DB: root
       USER_PASSWORD_DB: root
       FINANCEIRO_URL: http://analise:9999/api/solicitacao
       CONTAS_URL: http://contas:8888/api/cartoes
+      KEYCLOAK_ISSUER_URI: http://keycloak:8080/auth/realms/proposta
+      KEYCLOAK_JWKS_URI: http://keycloak:8080/auth/realms/proposta/protocol/openid-connect/certs
     networks: 
       - desafio-network
     
