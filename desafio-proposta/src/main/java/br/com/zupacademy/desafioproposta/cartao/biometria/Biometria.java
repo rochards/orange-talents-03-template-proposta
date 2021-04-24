@@ -21,6 +21,13 @@ public class Biometria {
     @ManyToOne(optional = false)
     private Cartao cartao;
 
+    /**
+     * @Deprecated hibernate only
+     * */
+    @Deprecated
+    public Biometria() {
+    }
+
     public Biometria(String impressaoDigital, Cartao cartao) {
         this.impressaoDigital = impressaoDigital;
         this.cadastradaEm = LocalDateTime.now();
