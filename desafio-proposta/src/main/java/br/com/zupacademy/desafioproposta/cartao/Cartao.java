@@ -59,6 +59,10 @@ public class Cartao {
         return emitidoEm;
     }
 
+    public Bloqueio getBloqueio() {
+        return bloqueio;
+    }
+
     public StatusCartao getStatus() {
         return status;
     }
