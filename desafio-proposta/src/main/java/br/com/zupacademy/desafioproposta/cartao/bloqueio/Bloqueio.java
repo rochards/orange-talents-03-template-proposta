@@ -1,6 +1,7 @@
 package br.com.zupacademy.desafioproposta.cartao.bloqueio;
 
 import br.com.zupacademy.desafioproposta.cartao.Cartao;
+import br.com.zupacademy.desafioproposta.cartao.StatusCartao;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
@@ -26,6 +27,10 @@ public class Bloqueio {
     @OneToOne(optional = false)
     private Cartao cartao;
 
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private StatusCartao statusCartaoNoLegado;
+
     /**
      * @Deprecated hibernate only
      * */
@@ -37,9 +42,18 @@ public class Bloqueio {
         this.ipCliente = ipCliente;
         this.userAgentCliente = userAgentCliente;
         this.cartao = cartao;
+        this.statusCartaoNoLegado = StatusCartao.ATIVO;
+    }
+
+    public void setStatusCartaoNoLegado(StatusCartao statusCartaoNoLegado) {
+        this.statusCartaoNoLegado = statusCartaoNoLegado;
     }
 
     public String getUserAgentCliente() {
         return userAgentCliente;
+    }
+
+    public Cartao getCartao() {
+        return cartao;
     }
 }

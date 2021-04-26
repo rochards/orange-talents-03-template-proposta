@@ -1,5 +1,6 @@
 package br.com.zupacademy.desafioproposta.cartao;
 
+import br.com.zupacademy.desafioproposta.cartao.bloqueio.Bloqueio;
 import br.com.zupacademy.desafioproposta.compartilhado.transacao.Transacao;
 import br.com.zupacademy.desafioproposta.proposta.Proposta;
 import br.com.zupacademy.desafioproposta.proposta.PropostaRepository;
@@ -12,6 +13,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
+
+import static br.com.zupacademy.desafioproposta.cartao.StatusCartao.ATIVO;
+import static br.com.zupacademy.desafioproposta.cartao.StatusCartao.BLOQUEADO;
 import static br.com.zupacademy.desafioproposta.proposta.StatusProposta.ELEGIVEL;
 
 @Component
@@ -53,6 +58,28 @@ public class EventosCartao {
                 }
             } catch (FeignException.InternalServerError ex) {
                 logger.warn(ex.getLocalizedMessage() + " ainda não foi encontrado cartão para essa proposta");
+            } catch (FeignException ex) {
+                logger.error(ex.getMessage());
+            }
+        }
+    }
+
+    /**
+     * Bloqueia cartões no sistema legado Serviço de Contas
+     * */
+    @Scheduled(fixedDelayString = "${cartao.fixed-delay}")
+    public void bloqueiaCartoes() {
+        var bloqueiosNaoAtualizadosNoLegado = transacao.busca(Bloqueio.class, "statusCartaoNoLegado", ATIVO,
+                100);
+        for (var bloqueio : bloqueiosNaoAtualizadosNoLegado) {
+            try {
+                servicoDeContas.bloqueiaCartao(bloqueio.getCartao().getContasIdCartao(), Map.of("sistemaResponsavel",
+                 "API propostas"));
+
+                bloqueio.setStatusCartaoNoLegado(BLOQUEADO);
+                transacao.atualizaEComita(bloqueio);
+            } catch (FeignException.InternalServerError ex) {
+                logger.warn(ex.getLocalizedMessage());
             } catch (FeignException ex) {
                 logger.error(ex.getMessage());
             }

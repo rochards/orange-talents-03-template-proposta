@@ -2,8 +2,11 @@ package br.com.zupacademy.desafioproposta.cartao;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.Map;
 
 @FeignClient(name = "contas", url = "${contas.url}")
 public interface ServicoDeContas {
@@ -13,4 +16,7 @@ public interface ServicoDeContas {
 
     @GetMapping
     CartaoResponse consultaCartaoGerado(@RequestParam Integer idProposta);
+
+    @PostMapping("/{contasIdCartao}/bloqueios")
+    Map<String, String> bloqueiaCartao(@PathVariable String contasIdCartao, Map<String, String> sistemaResponsavel);
 }
