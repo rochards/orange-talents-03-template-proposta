@@ -1,4 +1,4 @@
-package br.com.zupacademy.desafioproposta.cartao;
+package br.com.zupacademy.desafioproposta.contas;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -2,6 +2,9 @@ package br.com.zupacademy.desafioproposta.cartao;
 
 import br.com.zupacademy.desafioproposta.cartao.bloqueio.Bloqueio;
 import br.com.zupacademy.desafioproposta.compartilhado.transacao.Transacao;
+import br.com.zupacademy.desafioproposta.contas.CartaoResponse;
+import br.com.zupacademy.desafioproposta.contas.NovoCartaoRequest;
+import br.com.zupacademy.desafioproposta.contas.ServicoDeContas;
 import br.com.zupacademy.desafioproposta.proposta.Proposta;
 import br.com.zupacademy.desafioproposta.proposta.PropostaRepository;
 import feign.FeignException;

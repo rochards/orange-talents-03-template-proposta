@@ -1,4 +1,4 @@
-package br.com.zupacademy.desafioproposta.cartao;
+package br.com.zupacademy.desafioproposta.contas;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;

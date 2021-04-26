@@ -11,16 +11,16 @@ import org.springframework.stereotype.Component;
 public class FinanceiroHealthIndicator implements HealthIndicator {
 
     private final Logger logger = LoggerFactory.getLogger(FinanceiroHealthIndicator.class);
-    private final ConsultaFinanceiro consultaFinanceiro;
+    private final ServicoFinanceiro servicoFinanceiro;
 
-    public FinanceiroHealthIndicator(ConsultaFinanceiro consultaFinanceiro) {
-        this.consultaFinanceiro = consultaFinanceiro;
+    public FinanceiroHealthIndicator(ServicoFinanceiro servicoFinanceiro) {
+        this.servicoFinanceiro = servicoFinanceiro;
     }
 
     @Override
     public Health health() {
         try {
-            consultaFinanceiro.isUp();
+            servicoFinanceiro.isUp();
             return Health.up().build();
         } catch (FeignException ex) {
             logger.error(ex.getMessage());

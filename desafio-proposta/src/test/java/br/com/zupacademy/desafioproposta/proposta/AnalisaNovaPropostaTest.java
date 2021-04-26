@@ -1,6 +1,6 @@
 package br.com.zupacademy.desafioproposta.proposta;
 
-import br.com.zupacademy.desafioproposta.financeiro.ConsultaFinanceiro;
+import br.com.zupacademy.desafioproposta.financeiro.ServicoFinanceiro;
 import br.com.zupacademy.desafioproposta.financeiro.SolicitacaoRequest;
 import br.com.zupacademy.desafioproposta.financeiro.SolicitacaoResponse;
 import feign.FeignException;
@@ -23,7 +23,7 @@ class AnalisaNovaPropostaTest {
     @InjectMocks
     private AnalisaNovaProposta analisaNovaProposta;
     @Mock
-    private ConsultaFinanceiro consultaFinanceiro;
+    private ServicoFinanceiro servicoFinanceiro;
 
     private SolicitacaoRequest solicitacaoRequest;
 
@@ -37,7 +37,7 @@ class AnalisaNovaPropostaTest {
     void semRestricaoTeste01() {
         var solicitacaoResponse = new SolicitacaoResponse("22339358027", "Peter Parker", SEM_RESTRICAO, "1");
 
-        when(consultaFinanceiro.analisaSolicitacaoDeProposta(solicitacaoRequest))
+        when(servicoFinanceiro.analisaSolicitacaoDeProposta(solicitacaoRequest))
                 .thenReturn(solicitacaoResponse);
 
         boolean ehElegivel = analisaNovaProposta.semRestricao(solicitacaoRequest.getDocumento(),
@@ -50,7 +50,7 @@ class AnalisaNovaPropostaTest {
     @DisplayName("proposta não deveria ser elegível caso o cliente feign jogar a exceção UnprocessableEntity")
     void semRestricaoTeste02() {
         doThrow(FeignException.UnprocessableEntity.class)
-                .when(consultaFinanceiro).analisaSolicitacaoDeProposta(solicitacaoRequest);
+                .when(servicoFinanceiro).analisaSolicitacaoDeProposta(solicitacaoRequest);
 
         boolean ehElegivel = analisaNovaProposta.semRestricao(solicitacaoRequest.getDocumento(),
                 solicitacaoRequest.getNome(), solicitacaoRequest.getIdProposta());
@@ -62,7 +62,7 @@ class AnalisaNovaPropostaTest {
     @DisplayName("proposta não deveria ser elegível caso o cliente feign jogar a exceção FeignException")
     void semRestricaoTeste03() {
         doThrow(FeignException.class)
-                .when(consultaFinanceiro).analisaSolicitacaoDeProposta(solicitacaoRequest);
+                .when(servicoFinanceiro).analisaSolicitacaoDeProposta(solicitacaoRequest);
 
         boolean ehElegivel = analisaNovaProposta.semRestricao(solicitacaoRequest.getDocumento(),
                 solicitacaoRequest.getNome(), solicitacaoRequest.getIdProposta());

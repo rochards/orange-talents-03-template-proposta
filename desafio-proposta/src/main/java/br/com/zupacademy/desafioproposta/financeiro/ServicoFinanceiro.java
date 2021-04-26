@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @FeignClient(value = "solicitacaoPropostas", url = "${financeiro.url}")
-public interface ConsultaFinanceiro {
+public interface ServicoFinanceiro {
 
     @PostMapping
     SolicitacaoResponse analisaSolicitacaoDeProposta(SolicitacaoRequest solicitacaoRequest);

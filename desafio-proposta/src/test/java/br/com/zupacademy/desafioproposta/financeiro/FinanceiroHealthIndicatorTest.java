@@ -29,7 +29,7 @@ class FinanceiroHealthIndicatorTest {
     @Autowired
     private MockMvc mockMvc;
     @MockBean
-    private ConsultaFinanceiro consultaFinanceiro;
+    private ServicoFinanceiro servicoFinanceiro;
 
     private URI healthEndpoint;
 
@@ -43,7 +43,7 @@ class FinanceiroHealthIndicatorTest {
     @DisplayName("deveria retornar UP quando o serviço de Análise Financeira estiver respondendo")
     void healthTeste01() throws Exception {
         doNothing()
-                .when(consultaFinanceiro).isUp();
+                .when(servicoFinanceiro).isUp();
 
 
         mockMvc.perform(get(healthEndpoint))
@@ -55,7 +55,7 @@ class FinanceiroHealthIndicatorTest {
     @DisplayName("deveria retornar DOWN quando o serviço de Análise Financeira não estiver respondendo")
     void healthTest02() throws Exception {
         doThrow(FeignException.class)
-                .when(consultaFinanceiro).isUp();
+                .when(servicoFinanceiro).isUp();
 
         mockMvc.perform(get(healthEndpoint))
                 .andExpect(status().isServiceUnavailable())
