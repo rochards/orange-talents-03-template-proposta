@@ -5,6 +5,13 @@ SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 
 -- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+-- -----------------------------------------------------
+-- Schema proposta
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
 -- Schema proposta
 -- -----------------------------------------------------
 CREATE SCHEMA IF NOT EXISTS `proposta` DEFAULT CHARACTER SET utf8 ;
@@ -24,7 +31,7 @@ CREATE TABLE IF NOT EXISTS `proposta`.`proposta` (
   PRIMARY KEY (`id`),
   UNIQUE INDEX `UK_ay0la7s80cky229aexg8pyvod` (`documento` ASC) VISIBLE)
 ENGINE = InnoDB
-AUTO_INCREMENT = 6
+AUTO_INCREMENT = 3
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -44,7 +51,7 @@ CREATE TABLE IF NOT EXISTS `proposta`.`cartao` (
     FOREIGN KEY (`proposta_id`)
     REFERENCES `proposta`.`proposta` (`id`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 4
+AUTO_INCREMENT = 2
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -62,7 +69,6 @@ CREATE TABLE IF NOT EXISTS `proposta`.`biometria` (
     FOREIGN KEY (`cartao_id`)
     REFERENCES `proposta`.`cartao` (`id`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 3
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -70,10 +76,11 @@ DEFAULT CHARACTER SET = utf8;
 -- Table `proposta`.`bloqueio`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `proposta`.`bloqueio` (
+  `bloqueado_em` DATETIME(6) NOT NULL,
   `ip_cliente` VARCHAR(255) NOT NULL,
+  `status_cartao_no_legado` VARCHAR(255) NOT NULL,
   `user_agent_cliente` VARCHAR(255) NOT NULL,
   `cartao_id` INT NOT NULL,
-  `bloqueado_em` DATETIME(6) NOT NULL,
   PRIMARY KEY (`cartao_id`),
   CONSTRAINT `FKfyikbq2kri522nirnxfokdnyu`
     FOREIGN KEY (`cartao_id`)
