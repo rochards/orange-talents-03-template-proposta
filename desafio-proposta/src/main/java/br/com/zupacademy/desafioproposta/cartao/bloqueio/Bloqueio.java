@@ -56,4 +56,8 @@ public class Bloqueio {
     public Cartao getCartao() {
         return cartao;
     }
+
+    public StatusCartao getStatusCartaoNoLegado() {
+        return statusCartaoNoLegado;
+    }
 }
