@@ -49,6 +49,27 @@ DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
+-- Table `proposta`.`aviso_viagem`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `proposta`.`aviso_viagem` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `destino` VARCHAR(255) NOT NULL,
+  `em_viagem_ate` DATE NOT NULL,
+  `ip_cliente` VARCHAR(255) NULL DEFAULT NULL,
+  `registrado_em` DATETIME(6) NOT NULL,
+  `user_agent` VARCHAR(255) NULL DEFAULT NULL,
+  `cartao_id` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `FKt6y6bh63iy2bbi2avqv2eeb5b` (`cartao_id` ASC) VISIBLE,
+  CONSTRAINT `FKt6y6bh63iy2bbi2avqv2eeb5b`
+    FOREIGN KEY (`cartao_id`)
+    REFERENCES `proposta`.`cartao` (`id`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 3
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
 -- Table `proposta`.`biometria`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `proposta`.`biometria` (
