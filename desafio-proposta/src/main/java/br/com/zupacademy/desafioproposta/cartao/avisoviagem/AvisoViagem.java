@@ -60,6 +60,18 @@ public class AvisoViagem {
         return emViagemAte;
     }
 
+    public String getUserAgent() {
+        return userAgent;
+    }
+
+    public LocalDateTime getRegistradoEm() {
+        return registradoEm;
+    }
+
+    public StatusAvisoViagem getStatusAvisoNoLegado() {
+        return statusAvisoNoLegado;
+    }
+
     public String getContasIdCartao() {
         return cartao.getContasIdCartao();
     }
