@@ -1,5 +1,7 @@
 package br.com.zupacademy.desafioproposta.cartao;
 
+import br.com.zupacademy.desafioproposta.cartao.avisoviagem.AvisoViagem;
+import br.com.zupacademy.desafioproposta.cartao.avisoviagem.AvisoViagemRequest;
 import br.com.zupacademy.desafioproposta.cartao.bloqueio.Bloqueio;
 import br.com.zupacademy.desafioproposta.compartilhado.transacao.Transacao;
 import br.com.zupacademy.desafioproposta.contas.NovoCartaoRequest;
@@ -19,6 +21,8 @@ import java.util.Map;
 
 import static br.com.zupacademy.desafioproposta.cartao.StatusCartao.ATIVO;
 import static br.com.zupacademy.desafioproposta.cartao.StatusCartao.BLOQUEADO;
+import static br.com.zupacademy.desafioproposta.cartao.avisoviagem.StatusAvisoViagem.CRIADO;
+import static br.com.zupacademy.desafioproposta.cartao.avisoviagem.StatusAvisoViagem.NAO_CRIADO;
 import static br.com.zupacademy.desafioproposta.proposta.StatusProposta.ELEGIVEL;
 
 @Component
@@ -82,6 +86,25 @@ public class EventosCartao {
                 transacao.atualizaEComita(bloqueio);
             } catch (FeignException.InternalServerError ex) {
                 logger.warn(ex.getLocalizedMessage());
+            } catch (FeignException ex) {
+                logger.error(ex.getMessage());
+            }
+        }
+    }
+
+    /**
+     * Notifica ao sistema legado sobre viagens
+     * */
+    @Scheduled(fixedDelayString = "${cartao.fixed-delay}")
+    public void notificaViagens() {
+        var avisosNaoAtualizados = transacao.busca(AvisoViagem.class, "statusAvisoNoLegado", NAO_CRIADO, 100);
+        for (var avisoViagem : avisosNaoAtualizados) {
+            try {
+                var avisoRequest = new AvisoViagemRequest(avisoViagem.getDestino(), avisoViagem.getEmViagemAte());
+                servicoDeContas.notificaViagem(avisoViagem.getContasIdCartao(), avisoRequest);
+
+                avisoViagem.setStatusAvisoNoLegado(CRIADO);
+                transacao.atualizaEComita(avisoViagem);
             } catch (FeignException ex) {
                 logger.error(ex.getMessage());
             }

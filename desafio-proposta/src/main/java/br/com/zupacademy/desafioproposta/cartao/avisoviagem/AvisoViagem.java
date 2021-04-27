@@ -27,6 +27,10 @@ public class AvisoViagem {
     @Column(nullable = false)
     private LocalDateTime registradoEm;
 
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private StatusAvisoViagem statusAvisoNoLegado;
+
     /**
      * @Deprecated hibernate only
      * */
@@ -41,5 +45,22 @@ public class AvisoViagem {
         this.userAgent = userAgent;
         this.cartao = cartao;
         this.registradoEm = LocalDateTime.now();
+        this.statusAvisoNoLegado = StatusAvisoViagem.NAO_CRIADO;
+    }
+
+    public void setStatusAvisoNoLegado(StatusAvisoViagem statusAvisoNoLegado) {
+        this.statusAvisoNoLegado = statusAvisoNoLegado;
+    }
+
+    public String getDestino() {
+        return destino;
+    }
+
+    public LocalDate getEmViagemAte() {
+        return emViagemAte;
+    }
+
+    public String getContasIdCartao() {
+        return cartao.getContasIdCartao();
     }
 }

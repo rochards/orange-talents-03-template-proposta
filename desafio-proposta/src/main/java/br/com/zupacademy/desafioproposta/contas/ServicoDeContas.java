@@ -1,5 +1,6 @@
 package br.com.zupacademy.desafioproposta.contas;
 
+import br.com.zupacademy.desafioproposta.cartao.avisoviagem.AvisoViagemRequest;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,4 +20,7 @@ public interface ServicoDeContas {
 
     @PostMapping("/{contasIdCartao}/bloqueios")
     Map<String, String> bloqueiaCartao(@PathVariable String contasIdCartao, Map<String, String> sistemaResponsavel);
+
+    @PostMapping("/{contasIdCartao}/avisos")
+    Map<String, String> notificaViagem(@PathVariable String contasIdCartao, AvisoViagemRequest viagemRequest);
 }
