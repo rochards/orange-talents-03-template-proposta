@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS `proposta`.`proposta` (
   PRIMARY KEY (`id`),
   UNIQUE INDEX `UK_ay0la7s80cky229aexg8pyvod` (`documento` ASC) VISIBLE)
 ENGINE = InnoDB
-AUTO_INCREMENT = 3
+AUTO_INCREMENT = 5
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS `proposta`.`cartao` (
     FOREIGN KEY (`proposta_id`)
     REFERENCES `proposta`.`proposta` (`id`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 2
+AUTO_INCREMENT = 4
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -57,6 +57,7 @@ CREATE TABLE IF NOT EXISTS `proposta`.`aviso_viagem` (
   `em_viagem_ate` DATE NOT NULL,
   `ip_cliente` VARCHAR(255) NULL DEFAULT NULL,
   `registrado_em` DATETIME(6) NOT NULL,
+  `status_aviso_no_legado` VARCHAR(255) NOT NULL,
   `user_agent` VARCHAR(255) NULL DEFAULT NULL,
   `cartao_id` INT NOT NULL,
   PRIMARY KEY (`id`),
@@ -65,7 +66,7 @@ CREATE TABLE IF NOT EXISTS `proposta`.`aviso_viagem` (
     FOREIGN KEY (`cartao_id`)
     REFERENCES `proposta`.`cartao` (`id`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 3
+AUTO_INCREMENT = 2
 DEFAULT CHARACTER SET = utf8;
 
 
