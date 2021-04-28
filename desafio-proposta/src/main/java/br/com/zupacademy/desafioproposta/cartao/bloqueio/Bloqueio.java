@@ -53,8 +53,8 @@ public class Bloqueio {
         return userAgentCliente;
     }
 
-    public Cartao getCartao() {
-        return cartao;
+    public String getContasIdCartao() {
+        return cartao.getContasIdCartao();
     }
 
     public StatusCartao getStatusCartaoNoLegado() {
