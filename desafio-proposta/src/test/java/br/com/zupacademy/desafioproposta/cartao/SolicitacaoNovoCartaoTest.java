@@ -1,5 +1,8 @@
-package br.com.zupacademy.desafioproposta.contas;
+package br.com.zupacademy.desafioproposta.cartao;
 
+import br.com.zupacademy.desafioproposta.cartao.SolicitacaoNovoCartao;
+import br.com.zupacademy.desafioproposta.contas.NovoCartaoRequest;
+import br.com.zupacademy.desafioproposta.contas.ServicoDeContas;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

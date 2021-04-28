@@ -1,7 +1,7 @@
-package br.com.zupacademy.desafioproposta.contas;
+package br.com.zupacademy.desafioproposta.cartao;
 
-import br.com.zupacademy.desafioproposta.cartao.Cartao;
 import br.com.zupacademy.desafioproposta.compartilhado.transacao.Transacao;
+import br.com.zupacademy.desafioproposta.contas.ServicoDeContas;
 import br.com.zupacademy.desafioproposta.proposta.Proposta;
 import br.com.zupacademy.desafioproposta.proposta.PropostaRepository;
 import br.com.zupacademy.desafioproposta.proposta.StatusProposta;

@@ -1,5 +1,7 @@
-package br.com.zupacademy.desafioproposta.contas;
+package br.com.zupacademy.desafioproposta.cartao;
 
+import br.com.zupacademy.desafioproposta.contas.NovoCartaoRequest;
+import br.com.zupacademy.desafioproposta.contas.ServicoDeContas;
 import feign.FeignException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

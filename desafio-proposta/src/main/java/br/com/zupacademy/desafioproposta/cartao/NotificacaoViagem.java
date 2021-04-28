@@ -1,8 +1,9 @@
-package br.com.zupacademy.desafioproposta.contas;
+package br.com.zupacademy.desafioproposta.cartao;
 
 import br.com.zupacademy.desafioproposta.cartao.avisoviagem.AvisoViagem;
 import br.com.zupacademy.desafioproposta.cartao.avisoviagem.AvisoViagemRequest;
 import br.com.zupacademy.desafioproposta.compartilhado.transacao.Transacao;
+import br.com.zupacademy.desafioproposta.contas.ServicoDeContas;
 import feign.FeignException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

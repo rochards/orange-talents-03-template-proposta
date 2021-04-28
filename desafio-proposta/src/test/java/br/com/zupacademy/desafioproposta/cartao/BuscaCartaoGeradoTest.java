@@ -1,7 +1,10 @@
-package br.com.zupacademy.desafioproposta.contas;
+package br.com.zupacademy.desafioproposta.cartao;
 
+import br.com.zupacademy.desafioproposta.cartao.BuscaCartaoGerado;
 import br.com.zupacademy.desafioproposta.cartao.Cartao;
 import br.com.zupacademy.desafioproposta.compartilhado.transacao.Transacao;
+import br.com.zupacademy.desafioproposta.contas.CartaoResponse;
+import br.com.zupacademy.desafioproposta.contas.ServicoDeContas;
 import br.com.zupacademy.desafioproposta.proposta.Proposta;
 import br.com.zupacademy.desafioproposta.proposta.PropostaRepository;
 import feign.FeignException;

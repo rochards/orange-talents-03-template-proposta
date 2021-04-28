@@ -1,9 +1,11 @@
-package br.com.zupacademy.desafioproposta.contas;
+package br.com.zupacademy.desafioproposta.cartao;
 
 import br.com.zupacademy.desafioproposta.cartao.Cartao;
+import br.com.zupacademy.desafioproposta.cartao.NotificacaoViagem;
 import br.com.zupacademy.desafioproposta.cartao.avisoviagem.AvisoViagem;
 import br.com.zupacademy.desafioproposta.cartao.avisoviagem.AvisoViagemRequest;
 import br.com.zupacademy.desafioproposta.compartilhado.transacao.Transacao;
+import br.com.zupacademy.desafioproposta.contas.ServicoDeContas;
 import br.com.zupacademy.desafioproposta.proposta.Proposta;
 import feign.FeignException;
 import org.junit.jupiter.api.BeforeEach;
