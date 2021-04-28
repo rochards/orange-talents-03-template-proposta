@@ -40,11 +40,27 @@ public class CarteiraDigital {
         this.cartao = cartao;
     }
 
+    public void setStatus(StatusCarteira status) {
+        this.status = status;
+    }
+
+    public void setContasIdCarteira(String contasIdCarteira) {
+        this.contasIdCarteira = contasIdCarteira;
+    }
+
     public Integer getId() {
         return id;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
     public NomeCarteira getNome() {
         return nome;
+    }
+
+    public String getContasIdCartao() {
+        return cartao.getContasIdCartao();
     }
 }

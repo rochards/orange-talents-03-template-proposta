@@ -23,4 +23,7 @@ public interface ServicoDeContas {
 
     @PostMapping("/{contasIdCartao}/avisos")
     Map<String, String> notificaViagem(@PathVariable String contasIdCartao, AvisoViagemRequest viagemRequest);
+
+    @PostMapping("/{contasIdCartao}/carteiras")
+    CarteiraResponse associaCartaoACarteira(@PathVariable String contasIdCartao, NovaCarteiraRequest novaCarteiraRequest);
 }
