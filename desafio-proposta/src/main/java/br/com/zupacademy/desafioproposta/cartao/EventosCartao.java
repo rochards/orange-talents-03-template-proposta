@@ -14,14 +14,14 @@ public class EventosCartao {
 
     private final BloqueioCartao bloqueioCartao;
     private final NotificacaoViagem notificacaoViagem;
-    private final BuscaCartoesGerados buscaCartoesGerados;
+    private final BuscaCartaoGerado buscaCartaoGerado;
     private final SolicitacaoNovoCartao solicitacaoNovoCartao;
 
-    public EventosCartao(BloqueioCartao bloqueioCartao, NotificacaoViagem notificacaoViagem, BuscaCartoesGerados buscaCartoesGerados,
+    public EventosCartao(BloqueioCartao bloqueioCartao, NotificacaoViagem notificacaoViagem, BuscaCartaoGerado buscaCartaoGerado,
                          SolicitacaoNovoCartao solicitacaoNovoCartao) {
         this.bloqueioCartao = bloqueioCartao;
         this.notificacaoViagem = notificacaoViagem;
-        this.buscaCartoesGerados = buscaCartoesGerados;
+        this.buscaCartaoGerado = buscaCartaoGerado;
         this.solicitacaoNovoCartao = solicitacaoNovoCartao;
     }
 
@@ -32,7 +32,7 @@ public class EventosCartao {
 
     @Scheduled(fixedDelayString = "${cartao.fixed-delay}")
     public void buscaGerados() {
-        buscaCartoesGerados.busca();
+        buscaCartaoGerado.busca();
     }
 
     @Scheduled(fixedDelayString = "${cartao.fixed-delay}")

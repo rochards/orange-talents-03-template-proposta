@@ -22,10 +22,10 @@ import static br.com.zupacademy.desafioproposta.proposta.StatusProposta.ELEGIVEL
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class BuscaCartoesGeradosTest {
+class BuscaCartaoGeradoTest {
 
     @InjectMocks
-    private BuscaCartoesGerados buscaCartoesGerados;
+    private BuscaCartaoGerado buscaCartaoGerado;
     @Mock
     private Transacao transacao;
     @Mock
@@ -48,7 +48,7 @@ class BuscaCartoesGeradosTest {
         when(propostaRepository.findFirst100ByStatusAndCartoesEmpty(ELEGIVEL))
                 .thenReturn(List.of());
 
-        buscaCartoesGerados.busca();
+        buscaCartaoGerado.busca();
 
         verify(servicoDeContas, never()).consultaCartaoGerado(anyInt());
     }
@@ -65,7 +65,7 @@ class BuscaCartoesGeradosTest {
                 .thenReturn(new CartaoResponse(novoCartao.getContasIdCartao(), novoCartao.getEmitidoEm(),
                         proposta.getNome()));
 
-        buscaCartoesGerados.busca();
+        buscaCartaoGerado.busca();
 
         verify(servicoDeContas, atLeastOnce()).consultaCartaoGerado(proposta.getId());
         verify(transacao, atLeastOnce()).salvaEComita(novoCartao);
@@ -79,7 +79,7 @@ class BuscaCartoesGeradosTest {
         when(servicoDeContas.consultaCartaoGerado(proposta.getId()))
                 .thenThrow(FeignException.InternalServerError.class);
 
-        buscaCartoesGerados.busca();
+        buscaCartaoGerado.busca();
 
         verify(servicoDeContas, atLeastOnce()).consultaCartaoGerado(proposta.getId());
         verify(transacao, never()).salvaEComita(any(Cartao.class));
@@ -93,7 +93,7 @@ class BuscaCartoesGeradosTest {
         doThrow(FeignException.class)
                 .when(servicoDeContas).consultaCartaoGerado(proposta.getId());
 
-        buscaCartoesGerados.busca();
+        buscaCartaoGerado.busca();
 
         verify(servicoDeContas, atLeastOnce()).consultaCartaoGerado(proposta.getId());
         verify(transacao, never()).salvaEComita(any(Cartao.class));
@@ -111,7 +111,7 @@ class BuscaCartoesGeradosTest {
                 .thenReturn(new CartaoResponse(novoCartao.getContasIdCartao(), novoCartao.getEmitidoEm(), "Homem " +
                         "Aranha"));
 
-        buscaCartoesGerados.busca();
+        buscaCartaoGerado.busca();
 
         verify(servicoDeContas, atLeastOnce()).consultaCartaoGerado(proposta.getId());
         verify(transacao, never()).salvaEComita(novoCartao);

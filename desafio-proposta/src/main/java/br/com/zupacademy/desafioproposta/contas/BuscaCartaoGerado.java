@@ -11,14 +11,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
-public class BuscaCartoesGerados {
+public class BuscaCartaoGerado {
 
     private final Transacao transacao;
     private final ServicoDeContas servicoDeContas;
     private final PropostaRepository propostaRepository;
-    private final Logger logger = LoggerFactory.getLogger(BuscaCartoesGerados.class);
+    private final Logger logger = LoggerFactory.getLogger(BuscaCartaoGerado.class);
 
-    public BuscaCartoesGerados(Transacao transacao, ServicoDeContas servicoDeContas, PropostaRepository propostaRepository) {
+    public BuscaCartaoGerado(Transacao transacao, ServicoDeContas servicoDeContas, PropostaRepository propostaRepository) {
         this.transacao = transacao;
         this.servicoDeContas = servicoDeContas;
         this.propostaRepository = propostaRepository;
