@@ -5,6 +5,13 @@ SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 
 -- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+-- -----------------------------------------------------
+-- Schema proposta
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
 -- Schema proposta
 -- -----------------------------------------------------
 CREATE SCHEMA IF NOT EXISTS `proposta` DEFAULT CHARACTER SET utf8 ;
@@ -24,7 +31,7 @@ CREATE TABLE IF NOT EXISTS `proposta`.`proposta` (
   PRIMARY KEY (`id`),
   UNIQUE INDEX `UK_ay0la7s80cky229aexg8pyvod` (`documento` ASC) VISIBLE)
 ENGINE = InnoDB
-AUTO_INCREMENT = 5
+AUTO_INCREMENT = 7
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -44,7 +51,7 @@ CREATE TABLE IF NOT EXISTS `proposta`.`cartao` (
     FOREIGN KEY (`proposta_id`)
     REFERENCES `proposta`.`proposta` (`id`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 4
+AUTO_INCREMENT = 5
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -101,6 +108,26 @@ CREATE TABLE IF NOT EXISTS `proposta`.`bloqueio` (
     FOREIGN KEY (`cartao_id`)
     REFERENCES `proposta`.`cartao` (`id`))
 ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `proposta`.`carteira_digital`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `proposta`.`carteira_digital` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `contas_id_carteira` VARCHAR(255) NULL DEFAULT NULL,
+  `email` VARCHAR(255) NOT NULL,
+  `nome` VARCHAR(255) NOT NULL,
+  `status` VARCHAR(255) NOT NULL,
+  `cartao_id` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `FKo4ax2gigtahkbuh0yk0p8fwod` (`cartao_id` ASC) VISIBLE,
+  CONSTRAINT `FKo4ax2gigtahkbuh0yk0p8fwod`
+    FOREIGN KEY (`cartao_id`)
+    REFERENCES `proposta`.`cartao` (`id`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 3
 DEFAULT CHARACTER SET = utf8;
 
 

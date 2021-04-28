@@ -4,7 +4,6 @@ import br.com.zupacademy.desafioproposta.cartao.Cartao;
 import br.com.zupacademy.desafioproposta.cartao.EventosCartao;
 import br.com.zupacademy.desafioproposta.compartilhado.handlers.APIErrorHandler;
 import br.com.zupacademy.desafioproposta.compartilhado.transacao.Transacao;
-import br.com.zupacademy.desafioproposta.contas.NovaCarteiraRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -50,8 +49,7 @@ public class NovoPaypalController {
         var novaCarteira = paypalRequest.toModel(cartao);
         novaCarteira = transacao.salvaEComita(novaCarteira);
 
-        eventosCartao.associaCarteira(idCartao, new NovaCarteiraRequest(novaCarteira.getEmail(),
-                        novaCarteira.getNome().name()), novaCarteira);
+        eventosCartao.associaCarteira(idCartao, novaCarteira);
 
         URI location = uriBuilder.path("cartoes/{idCartao}/carteiras/paypal/{id}").build(idCartao, novaCarteira.getId());
         return ResponseEntity.created(location).build();

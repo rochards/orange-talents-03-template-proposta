@@ -34,8 +34,8 @@ public class EventosCartao {
     }
 
     @Async
-    public void associaCarteira(String idCartao, NovaCarteiraRequest novaCarteiraRequest, CarteiraDigital carteira) {
-        criacaoBuscaCarteira.associaCarteira(idCartao, novaCarteiraRequest, carteira);
+    public void associaCarteira(String idCartao, CarteiraDigital carteira) {
+        criacaoBuscaCarteira.associaCarteira(idCartao, carteira);
     }
 
     @Scheduled(fixedDelayString = "${cartao.fixed-delay}")

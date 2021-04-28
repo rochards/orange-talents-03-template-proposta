@@ -24,7 +24,8 @@ public class CriacaoBuscaCarteira {
         this.servicoDeContas = servicoDeContas;
     }
 
-    public void associaCarteira(String idCartao, NovaCarteiraRequest novaCarteiraRequest, CarteiraDigital carteira) {
+    public void associaCarteira(String idCartao, CarteiraDigital carteira) {
+        var novaCarteiraRequest = new NovaCarteiraRequest(carteira.getEmail(), carteira.getNome().name());
         try {
             var carteiraResponse = servicoDeContas.associaCartaoACarteira(idCartao, novaCarteiraRequest);
             atualizaCarteira(carteiraResponse, carteira);
