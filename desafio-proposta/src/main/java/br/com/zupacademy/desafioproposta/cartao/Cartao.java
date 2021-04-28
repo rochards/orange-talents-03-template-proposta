@@ -1,10 +1,13 @@
 package br.com.zupacademy.desafioproposta.cartao;
 
 import br.com.zupacademy.desafioproposta.cartao.bloqueio.Bloqueio;
+import br.com.zupacademy.desafioproposta.cartao.carteira.CarteiraDigital;
+import br.com.zupacademy.desafioproposta.cartao.carteira.NomeCarteira;
 import br.com.zupacademy.desafioproposta.proposta.Proposta;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -22,12 +25,15 @@ public class Cartao {
     @ManyToOne(optional = false)
     private Proposta proposta;
 
-    @OneToOne(cascade = CascadeType.MERGE, mappedBy = "cartao")
-    private Bloqueio bloqueio;
-
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private StatusCartao status;
+
+    @OneToOne(cascade = CascadeType.MERGE, mappedBy = "cartao")
+    private Bloqueio bloqueio;
+
+    @OneToMany(mappedBy = "cartao")
+    private List<CarteiraDigital> carteirasDigitais;
 
     /**
      * @Deprecated hibernate only
@@ -65,6 +71,11 @@ public class Cartao {
 
     public StatusCartao getStatus() {
         return status;
+    }
+
+    public boolean associadoACarteira(NomeCarteira nomeCarteira) {
+        return carteirasDigitais.stream()
+                .anyMatch(carteiraDigital -> carteiraDigital.getNome() == nomeCarteira);
     }
 
     @Override
