@@ -14,6 +14,7 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
+import static br.com.zupacademy.desafioproposta.cartao.carteira.NomeCarteira.PAYPAL;
 import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 
 @RestController
@@ -29,7 +30,8 @@ public class NovoPaypalController {
     }
 
     @PostMapping("/{idCartao}/carteiras/paypal")
-    public ResponseEntity<?> associa(@PathVariable String idCartao, @RequestBody @Valid NovoPaypalRequest paypalRequest,
+    public ResponseEntity<?> associa(@PathVariable String idCartao,
+                                     @RequestBody @Valid NovaCarteiraRequest carteiraRequest,
                                      BindingResult result, UriComponentsBuilder uriBuilder) { // o BindingResult deve
         // vir logo após o objeto que está sendo validado!
         if (result.hasErrors()) {
@@ -40,13 +42,13 @@ public class NovoPaypalController {
         if (cartao == null) {
             return ResponseEntity.notFound().build();
         }
-        if (cartao.associadoACarteira(NomeCarteira.PAYPAL)) {
+        if (cartao.associadoACarteira(PAYPAL)) {
             var errors = new APIErrorHandler(List.of(new FieldError("CarteiraDigital", "idCartao",
                     "esse cartão já está associado ao Paypal")), UNPROCESSABLE_ENTITY);
             return ResponseEntity.status(UNPROCESSABLE_ENTITY).body(errors);
         }
 
-        var novaCarteira = paypalRequest.toModel(cartao);
+        var novaCarteira = carteiraRequest.toModel(PAYPAL, cartao);
         novaCarteira = transacao.salvaEComita(novaCarteira);
 
         eventosCartao.associaCarteira(idCartao, novaCarteira);
