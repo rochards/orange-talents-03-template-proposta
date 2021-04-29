@@ -30,7 +30,7 @@ public class NovoSamsungpayController {
 
     @PostMapping("/{idCartao}/carteiras/samsungpay")
     public ResponseEntity<?> associa(@PathVariable String idCartao,
-                                     @RequestBody @Valid NovoSamsungpayRequest samsungpayRequest,
+                                     @RequestBody @Valid NovaCarteiraRequest carteiraRequest,
                                      BindingResult result, UriComponentsBuilder uriBuilder) {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(new APIErrorHandler(result.getFieldErrors()));
@@ -46,7 +46,7 @@ public class NovoSamsungpayController {
             return ResponseEntity.status(UNPROCESSABLE_ENTITY).body(errors);
         }
 
-        var novaCarteira = samsungpayRequest.toModel(cartao);
+        var novaCarteira = carteiraRequest.toModel(SAMSUNG_PAY, cartao);
         novaCarteira = transacao.salvaEComita(novaCarteira);
 
         eventosCartao.associaCarteira(idCartao, novaCarteira);

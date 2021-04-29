@@ -3,6 +3,7 @@ package br.com.zupacademy.desafioproposta.cartao.carteira;
 import br.com.zupacademy.desafioproposta.cartao.Cartao;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 public class CarteiraDigital {
@@ -56,11 +57,32 @@ public class CarteiraDigital {
         return email;
     }
 
+    public StatusCarteira getStatus() {
+        return status;
+    }
+
     public NomeCarteira getNome() {
         return nome;
     }
 
+    public Cartao getCartao() {
+        return cartao;
+    }
+
     public String getContasIdCartao() {
         return cartao.getContasIdCartao();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof CarteiraDigital)) return false;
+        CarteiraDigital that = (CarteiraDigital) o;
+        return email.equals(that.email) && nome == that.nome;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(email, nome);
     }
 }
