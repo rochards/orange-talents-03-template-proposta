@@ -4,6 +4,7 @@ import br.com.zupacademy.desafioproposta.cartao.Cartao;
 import br.com.zupacademy.desafioproposta.cartao.StatusCartao;
 import br.com.zupacademy.desafioproposta.compartilhado.handlers.APIErrorHandler;
 import br.com.zupacademy.desafioproposta.compartilhado.transacao.Transacao;
+import io.opentracing.Tracer;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -19,9 +20,11 @@ import java.util.List;
 @RequestMapping("/cartoes")
 public class BloqueioCartaoController {
 
+    private final Tracer tracer;
     private final Transacao transacao;
 
-    public BloqueioCartaoController(Transacao transacao) {
+    public BloqueioCartaoController(Tracer tracer, Transacao transacao) {
+        this.tracer = tracer;
         this.transacao = transacao;
     }
 
@@ -42,6 +45,11 @@ public class BloqueioCartaoController {
                     "nullo")));
             return ResponseEntity.badRequest().body(error);
         }
+
+        var activeSpan = tracer.activeSpan();
+        activeSpan.setTag("id.cartao", idCartao);
+        activeSpan.setBaggageItem("user.agent", httpRequest.getHeader("User-Agent"));
+        activeSpan.log("bloqueando cartão...");
 
         cartao.setStatus(StatusCartao.BLOQUEADO);
         cartao.setBloqueio(new Bloqueio(httpRequest.getRemoteAddr(), httpRequest.getHeader("User-Agent"), cartao));

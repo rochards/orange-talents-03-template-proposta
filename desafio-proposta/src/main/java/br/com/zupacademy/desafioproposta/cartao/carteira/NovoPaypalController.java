@@ -4,6 +4,7 @@ import br.com.zupacademy.desafioproposta.cartao.Cartao;
 import br.com.zupacademy.desafioproposta.cartao.EventosCartao;
 import br.com.zupacademy.desafioproposta.compartilhado.handlers.APIErrorHandler;
 import br.com.zupacademy.desafioproposta.compartilhado.transacao.Transacao;
+import io.opentracing.Tracer;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -21,10 +22,12 @@ import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 @RequestMapping("/cartoes")
 public class NovoPaypalController {
 
+    private final Tracer tracer;
     private final Transacao transacao;
     private final EventosCartao eventosCartao;
 
-    public NovoPaypalController(Transacao transacao, EventosCartao eventosCartao) {
+    public NovoPaypalController(Tracer tracer, Transacao transacao, EventosCartao eventosCartao) {
+        this.tracer = tracer;
         this.transacao = transacao;
         this.eventosCartao = eventosCartao;
     }
@@ -47,6 +50,11 @@ public class NovoPaypalController {
                     "esse cartão já está associado ao Paypal")), UNPROCESSABLE_ENTITY);
             return ResponseEntity.status(UNPROCESSABLE_ENTITY).body(errors);
         }
+
+        var activeSpan = tracer.activeSpan();
+        activeSpan.setTag("id.cartao", idCartao);
+        activeSpan.setBaggageItem("carteira.nome", PAYPAL.name());
+        activeSpan.log("associando cartão ao Paypal...");
 
         var novaCarteira = carteiraRequest.toModel(PAYPAL, cartao);
         novaCarteira = transacao.salvaEComita(novaCarteira);

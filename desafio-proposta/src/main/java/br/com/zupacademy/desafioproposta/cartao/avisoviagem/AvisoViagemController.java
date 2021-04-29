@@ -3,6 +3,7 @@ package br.com.zupacademy.desafioproposta.cartao.avisoviagem;
 import br.com.zupacademy.desafioproposta.cartao.Cartao;
 import br.com.zupacademy.desafioproposta.compartilhado.handlers.APIErrorHandler;
 import br.com.zupacademy.desafioproposta.compartilhado.transacao.Transacao;
+import io.opentracing.Tracer;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -14,9 +15,11 @@ import javax.validation.Valid;
 @RequestMapping("/cartoes")
 public class AvisoViagemController {
 
+    private final Tracer tracer;
     private final Transacao transacao;
 
-    public AvisoViagemController(Transacao transacao) {
+    public AvisoViagemController(Tracer tracer, Transacao transacao) {
+        this.tracer = tracer;
         this.transacao = transacao;
     }
 
@@ -30,6 +33,11 @@ public class AvisoViagemController {
         if (cartao == null) {
             return ResponseEntity.notFound().build();
         }
+
+        var activeSpan = tracer.activeSpan();
+        activeSpan.setTag("id.cartao", idCartao);
+        activeSpan.setBaggageItem("user.agent", httpRequest.getHeader("User-Agent"));
+        activeSpan.log("aviso sobre viagem...");
 
         var novoAviso = avisoRequest.toModel(httpRequest.getRemoteAddr(), httpRequest.getHeader("User-Agent"), cartao);
         transacao.salvaEComita(novoAviso);
