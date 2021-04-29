@@ -168,6 +168,7 @@ services:
       - contas
       - analise
       - keycloak
+      - jaeger
     environment:
       PROPOSTA_DB_URL: jdbc:mysql://mysql:3306/proposta_db
       USER_NAME_DB: root
@@ -177,6 +178,9 @@ services:
       KEYCLOAK_ISSUER_URI: http://keycloak:8080/auth/realms/proposta
       KEYCLOAK_JWKS_URI: http://keycloak:8080/auth/realms/proposta/protocol/openid-connect/certs
       PROFILE: prod
+      JAEGER_ENABLED: "true"
+      JAEGER_ENDPOINT: http://jaeger:14268/api/traces
+      JAEGER_SAMPLER: 1
     networks: 
       - desafio-network
     
