@@ -7,6 +7,7 @@ import br.com.zupacademy.desafioproposta.proposta.Proposta;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -47,6 +48,7 @@ public class Cartao {
         this.emitidoEm = emitidoEm;
         this.proposta = proposta;
         this.status = StatusCartao.ATIVO;
+        this.carteirasDigitais = new ArrayList<>();
     }
 
     public void setBloqueio(Bloqueio bloqueio) {
@@ -71,6 +73,10 @@ public class Cartao {
 
     public StatusCartao getStatus() {
         return status;
+    }
+
+    public List<CarteiraDigital> getCarteirasDigitais() {
+        return carteirasDigitais;
     }
 
     public boolean associadoACarteira(NomeCarteira nomeCarteira) {
