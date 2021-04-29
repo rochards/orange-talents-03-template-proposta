@@ -3,6 +3,7 @@ package br.com.zupacademy.desafioproposta.proposta;
 import br.com.zupacademy.desafioproposta.cartao.EventosCartao;
 import br.com.zupacademy.desafioproposta.compartilhado.handlers.APIErrorHandler;
 import br.com.zupacademy.desafioproposta.compartilhado.transacao.Transacao;
+import io.opentracing.Tracer;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -22,15 +23,17 @@ import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 @RequestMapping("/propostas")
 public class NovaPropostaController {
 
-    private final EventosCartao eventosCartao;
+    private final Tracer tracer;
     private final Transacao transacao;
+    private final EventosCartao eventosCartao;
     private final PropostaRepository propostaRepository;
     private final AnalisaNovaProposta analisaNovaProposta;
 
-    public NovaPropostaController(EventosCartao eventosCartao, Transacao transacao, PropostaRepository propostaRepository,
-                                  AnalisaNovaProposta analisaNovaProposta) {
-        this.eventosCartao = eventosCartao;
+    public NovaPropostaController(Tracer tracer, Transacao transacao, EventosCartao eventosCartao,
+                                  PropostaRepository propostaRepository, AnalisaNovaProposta analisaNovaProposta) {
+        this.tracer = tracer;
         this.transacao = transacao;
+        this.eventosCartao = eventosCartao;
         this.propostaRepository = propostaRepository;
         this.analisaNovaProposta = analisaNovaProposta;
     }
@@ -38,7 +41,6 @@ public class NovaPropostaController {
     @PostMapping
     public ResponseEntity<?> cria(@RequestBody @Valid NovaPropostaRequest propostaRequest, BindingResult result,
                                   UriComponentsBuilder uriBuilder) {
-
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(new APIErrorHandler(result.getFieldErrors()));
         }
@@ -47,6 +49,11 @@ public class NovaPropostaController {
                     "já existe uma proposta cadastrada para esse documento")), UNPROCESSABLE_ENTITY);
             return ResponseEntity.status(UNPROCESSABLE_ENTITY).body(errors);
         }
+
+        var activeSpan = tracer.activeSpan();
+        activeSpan.setTag("solicitante.email", propostaRequest.getEmail());
+        activeSpan.setBaggageItem("solicitante.email", propostaRequest.getEmail());
+        activeSpan.log("criando nova proposta...");
 
         var proposta = propostaRequest.toModel();
         proposta = transacao.salvaEComita(proposta);
