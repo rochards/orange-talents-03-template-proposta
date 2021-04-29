@@ -5,10 +5,12 @@ import br.com.zupacademy.desafioproposta.compartilhado.transacao.Transacao;
 import br.com.zupacademy.desafioproposta.proposta.Proposta;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.opentracing.Tracer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Answers;
 import org.mockito.InjectMocks;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -36,6 +38,11 @@ class NovaBiometriaControllerTest {
     @MockBean
     private Transacao transacao;
 
+    /* Precisei adicionar o DEEP_STUBS abaixo pq na linha 40 da classe NovaBiometriaController ficava dando
+    NullPointerException*/
+    @MockBean(answer = Answers.RETURNS_DEEP_STUBS)
+    private Tracer tracer;
+
     private URI endpoint;
     private MockMvc mockMvc;
     private Proposta proposta;
@@ -48,7 +55,7 @@ class NovaBiometriaControllerTest {
         this.cartao = new Cartao("1234-5678-9010", LocalDateTime.now(), proposta);
 
         this.mockMvc = MockMvcBuilders // tive que fazer manual pq o @Autowired em MockMvc não estava funcionando
-                .standaloneSetup(new NovaBiometriaController(transacao))
+                .standaloneSetup(new NovaBiometriaController(tracer, transacao))
                 .build();
     }
 
