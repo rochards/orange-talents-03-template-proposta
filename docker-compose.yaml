@@ -182,6 +182,8 @@ services:
       JAEGER_ENABLED: "true"
       JAEGER_ENDPOINT: http://jaeger:14268/api/traces
       JAEGER_SAMPLER: 1
+      DOCUMENTO_SALT: 812413ee88103eca
+      DOCUMENTO_PASSWORD: 5cbefdd115858bc8d433d2f412791ecc86918649100d7966047378ea84f31aaa
     networks: 
       - desafio-network
     

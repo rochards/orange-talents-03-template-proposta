@@ -60,10 +60,10 @@ public class NovaPropostaController {
         var proposta = propostaRequest.toModel(encodeDocumento);
         proposta = transacao.salvaEComita(proposta);
 
-        boolean elegivel = analisaNovaProposta.semRestricao(proposta.getDocumento(), proposta.getNome(),
+        boolean elegivel = analisaNovaProposta.semRestricao(propostaRequest.getDocumento(), proposta.getNome(),
                 proposta.getId().toString());
         if (elegivel) {
-            eventosCartao.solicitaNovo(proposta.getDocumento(), proposta.getNome(), proposta.getId());
+            eventosCartao.solicitaNovo(propostaRequest.getDocumento(), proposta.getNome(), proposta.getId());
         }
 
         proposta.atualizaStatus(elegivel);
