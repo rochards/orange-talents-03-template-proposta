@@ -45,7 +45,7 @@ public class Proposta {
 
     /**
      * Cria um nova Proposta. Uma nova Proposta é criada por default com status NAO_ELEGIVE
-     * @param documento documento do solicitante
+     * @param documento documento do solicitante. Deve vir criptografado pela classe EncodeDocumento
      * @param email email do solicitante
      * @param nome nome do solicitante
      * @param endereco do solicitante

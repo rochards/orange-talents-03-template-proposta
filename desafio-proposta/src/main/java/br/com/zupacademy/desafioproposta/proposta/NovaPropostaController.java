@@ -26,14 +26,16 @@ public class NovaPropostaController {
     private final Tracer tracer;
     private final Transacao transacao;
     private final EventosCartao eventosCartao;
+    private final EncodeDocumento encodeDocumento;
     private final PropostaRepository propostaRepository;
     private final AnalisaNovaProposta analisaNovaProposta;
 
     public NovaPropostaController(Tracer tracer, Transacao transacao, EventosCartao eventosCartao,
-                                  PropostaRepository propostaRepository, AnalisaNovaProposta analisaNovaProposta) {
+                                  EncodeDocumento encodeDocumento, PropostaRepository propostaRepository, AnalisaNovaProposta analisaNovaProposta) {
         this.tracer = tracer;
         this.transacao = transacao;
         this.eventosCartao = eventosCartao;
+        this.encodeDocumento = encodeDocumento;
         this.propostaRepository = propostaRepository;
         this.analisaNovaProposta = analisaNovaProposta;
     }
@@ -44,7 +46,7 @@ public class NovaPropostaController {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(new APIErrorHandler(result.getFieldErrors()));
         }
-        if (propostaRepository.existsByDocumento(propostaRequest.getDocumento())) {
+        if (propostaRepository.existsByDocumento(encodeDocumento.encode(propostaRequest.getDocumento()))) {
             var errors = new APIErrorHandler(List.of(new FieldError("Proposta", "documento",
                     "já existe uma proposta cadastrada para esse documento")), UNPROCESSABLE_ENTITY);
             return ResponseEntity.status(UNPROCESSABLE_ENTITY).body(errors);
@@ -55,7 +57,7 @@ public class NovaPropostaController {
         activeSpan.setBaggageItem("solicitante.email", propostaRequest.getEmail());
         activeSpan.log("criando nova proposta...");
 
-        var proposta = propostaRequest.toModel();
+        var proposta = propostaRequest.toModel(encodeDocumento);
         proposta = transacao.salvaEComita(proposta);
 
         boolean elegivel = analisaNovaProposta.semRestricao(proposta.getDocumento(), proposta.getNome(),
